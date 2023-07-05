@@ -1,0 +1,10 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "OPENAI_API_KEY": "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"
+}
