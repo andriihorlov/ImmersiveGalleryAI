@@ -2,7 +2,7 @@
 using VRUiKits.Utils;
 using Zenject;
 
-namespace AiGalleryVR.Keyboard
+namespace ImmersiveGalleryAI.Keyboard
 {
     public class KeyBoardInstaller : MonoInstaller<KeyBoardInstaller>
     {

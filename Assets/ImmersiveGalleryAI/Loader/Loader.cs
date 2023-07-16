@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AiGalleryVR.Loader
+namespace ImmersiveGalleryAI.Loader
 {
     public class Loader : MonoBehaviour
     {

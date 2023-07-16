@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace AiGalleryVR.Web
+namespace ImmersiveGalleryAI.Web
 {
     public class WebData : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AiGalleryVR.Utilities
+namespace ImmersiveGalleryAI.Utilities
 {
     public class FollowTarget : MonoBehaviour
     {
