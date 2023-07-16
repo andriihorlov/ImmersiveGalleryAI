@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using UnityEngine;
 
-namespace AiGalleryVR.Web
+namespace ImmersiveGalleryAI.Web
 {
     public interface IWebManager
     {

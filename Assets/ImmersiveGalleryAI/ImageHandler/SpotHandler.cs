@@ -1,17 +1,20 @@
 using System;
 using DG.Tweening;
+using ImmersiveGalleryAI.Utilities;
 using UnityEngine;
 
-namespace AiGalleryVR.ImageHandler
+namespace ImmersiveGalleryAI.ImageHandler
 {
-    public class ImageSpot : MonoBehaviour
+    public class SpotHandler : MonoBehaviour
     {
         public event Action SpotReachedEvent;
         public event Action SpotOutEvent;
 
+        [SerializeField] private TriggerEventReceiver _spotTriggerReceiver;
+
         private const Ease AnimationEase = Ease.OutCirc;
-        private const float DefaultPositionY = -1.5f;
-        private const float DownPositionY = -1.57f;
+        private const float DefaultPositionY = 0f;
+        private const float DownPositionY = -1.9f;
 
         private const float UpAnimationTime = 0.25f;
         private const float DownAnimationTime = 1f;
@@ -25,7 +28,19 @@ namespace AiGalleryVR.ImageHandler
             _currentTransform = transform;
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnEnable()
+        {
+            _spotTriggerReceiver.TriggerEnter += TriggerEnterEventReceiver;
+            _spotTriggerReceiver.TriggerExit += TriggerExitEventReceiver;
+        }
+
+        private void OnDisable()
+        {
+            _spotTriggerReceiver.TriggerEnter -= TriggerEnterEventReceiver;
+            _spotTriggerReceiver.TriggerExit -= TriggerExitEventReceiver;
+        }
+
+        private void TriggerEnterEventReceiver(Collider other)
         {
             if (!other.CompareTag(PlayerTag))
             {
@@ -36,7 +51,7 @@ namespace AiGalleryVR.ImageHandler
             ButtonAnimation(isDown: true);
         }
 
-        private void OnTriggerExit(Collider other)
+        private void TriggerExitEventReceiver(Collider other)
         {
             if (!other.CompareTag(PlayerTag))
             {

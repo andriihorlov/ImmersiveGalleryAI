@@ -1,9 +1,9 @@
-using AiGalleryVR.Keyboard;
 using DG.Tweening;
+using ImmersiveGalleryAI.Keyboard;
 using UnityEngine;
 using Zenject;
 
-namespace AiGalleryVR.ImageHandler
+namespace ImmersiveGalleryAI.ImageHandler
 {
     public class ImageController : MonoBehaviour
     {
@@ -11,7 +11,7 @@ namespace AiGalleryVR.ImageHandler
         private const float FadeOutAnimationDuration = 0.5f;
 
         [SerializeField] private CanvasGroup _imageCanvasGroup;
-        [SerializeField] private ImageSpot _imageSpot;
+        [SerializeField] private SpotHandler _spotHandler;
 
         [Inject] private IKeyboard _keyboardManager;
         private bool _onSpot;
@@ -23,19 +23,19 @@ namespace AiGalleryVR.ImageHandler
 
         private void OnEnable()
         {
-            _imageSpot.SpotReachedEvent += SpotReachedEventHandler;
-            _imageSpot.SpotOutEvent += SpotOutEventHandler;
+            _spotHandler.SpotReachedEvent += SpotHandlerReachedEventHandler;
+            _spotHandler.SpotOutEvent += SpotHandlerOutEventHandler;
             _keyboardManager.EnterPressedAction += EnterPressedEventHandler;
         }
 
         private void OnDisable()
         {
-            _imageSpot.SpotReachedEvent -= SpotReachedEventHandler;
-            _imageSpot.SpotOutEvent -= SpotOutEventHandler;
+            _spotHandler.SpotReachedEvent -= SpotHandlerReachedEventHandler;
+            _spotHandler.SpotOutEvent -= SpotHandlerOutEventHandler;
             _keyboardManager.EnterPressedAction -= EnterPressedEventHandler;
         }
 
-        private void SpotOutEventHandler()
+        private void SpotHandlerOutEventHandler()
         {
             _onSpot = false;
             if (_keyboardManager.IsActive)
@@ -46,7 +46,7 @@ namespace AiGalleryVR.ImageHandler
             SetActiveImage(false);
         }
 
-        private void SpotReachedEventHandler()
+        private void SpotHandlerReachedEventHandler()
         {
             if (_onSpot)
             {

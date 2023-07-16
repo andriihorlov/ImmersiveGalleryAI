@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using VRUiKits.Utils;
 
-namespace AiGalleryVR.Keyboard
+namespace ImmersiveGalleryAI.Keyboard
 {
     public interface IKeyboard 
     {
