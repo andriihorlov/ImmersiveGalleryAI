@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using VRUiKits.Utils;
+﻿using VRUiKits.Utils;
 using Zenject;
 
 namespace ImmersiveGalleryAI.Keyboard
@@ -9,7 +8,6 @@ namespace ImmersiveGalleryAI.Keyboard
         public override void InstallBindings()
         {
             Container.Bind<IKeyboard>().To<KeyboardManager>().AsSingle();
-            Debug.Log($"Keyboard binds installed");
         }
     }
 }

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using ImmersiveGalleryAI.Keyboard;
 using ImmersiveGalleryAI.Loader;
+using ImmersiveGalleryAI.VoiceRecognition;
 using ImmersiveGalleryAI.Web;
-using Oculus.Voice;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +17,8 @@ namespace ImmersiveGalleryAI.ImageHandler
         [SerializeField] private Image _resultedImage;
         [SerializeField] private LoaderHandler _loadingLabel;
         [SerializeField] private Button _voiceButton;
+        [Space]
+        [SerializeField] private TextMeshProUGUI _voiceButtonText;
 
 #region Physical buttons
 
@@ -27,8 +29,12 @@ namespace ImmersiveGalleryAI.ImageHandler
         // [SerializeField] private TriggerEventReceiver _generateButtonEventReceiver;
 #endregion
 
+        private const string EnableMic = "Voice";
+        private const string DisableMic = "Stop";
+        
         [Inject] private IWebManager _webManager;
         [Inject] private IKeyboard _keyboard;
+        [Inject] private IVoiceHandler _voiceHandler;
 
         private bool _isMicEnabled;
 
@@ -42,10 +48,9 @@ namespace ImmersiveGalleryAI.ImageHandler
             _requestImageButton.onClick.AddListener(GenerateImageEventHandler);
             _inputField.onSelect.AddListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.AddListener(VoiceClickedEventHandler);
-            
-            _appVoiceExperience.events.OnPartialTranscription.AddListener(OnRequestTranscript);
-            _appVoiceExperience.events.OnFullTranscription.AddListener(OnRequestTranscript);
-            _appVoiceExperience.events.OnStoppedListeningDueToDeactivation.AddListener(OnStoppedListeningDueToDeactivation);
+
+            _voiceHandler.TranscriptionDoneEvent += OnRequestTranscript;
+            _voiceHandler.StoppedListeningEvent += OnStoppedListeningDueToDeactivation;
 
 #region Physical button
 
@@ -61,9 +66,8 @@ namespace ImmersiveGalleryAI.ImageHandler
             _inputField.onSelect.RemoveListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.RemoveListener(VoiceClickedEventHandler);
             
-            _appVoiceExperience.events.OnPartialTranscription.RemoveListener(OnRequestTranscript);
-            _appVoiceExperience.events.OnFullTranscription.RemoveListener(OnRequestTranscript);
-            _appVoiceExperience.events.OnStoppedListeningDueToDeactivation.RemoveListener(OnStoppedListeningDueToDeactivation);
+            _voiceHandler.TranscriptionDoneEvent -= OnRequestTranscript;
+            _voiceHandler.StoppedListeningEvent -= OnStoppedListeningDueToDeactivation;
 
 #region Physical button
 
@@ -105,12 +109,6 @@ namespace ImmersiveGalleryAI.ImageHandler
             _keyboard.SetActive(true);
         }
 
-        private const string EnableMic = "Voice";
-        private const string DisableMic = "Stop";
-        [Space]
-        [SerializeField] private TextMeshProUGUI _voiceButtonText;
-        [SerializeField] private AppVoiceExperience _appVoiceExperience;
-        
 
 #region Voice recognition
 
@@ -120,7 +118,7 @@ namespace ImmersiveGalleryAI.ImageHandler
             
             if (_isMicEnabled)
             {
-                _appVoiceExperience.Activate();
+                _voiceHandler.Activate();
             }
             else
             {
