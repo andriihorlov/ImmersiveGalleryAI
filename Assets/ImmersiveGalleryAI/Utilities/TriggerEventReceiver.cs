@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace AiGalleryVR.Utilities
+namespace ImmersiveGalleryAI.Utilities
 {
     [RequireComponent(typeof(Collider))]
     [RequireComponent(typeof(Rigidbody))]

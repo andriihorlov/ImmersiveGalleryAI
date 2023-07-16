@@ -3,10 +3,10 @@
  * Any issue please contact yunhn.lee@gmail.com
  ***/
 
-using AiGalleryVR.Keyboard;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
+using ImmersiveGalleryAI.Keyboard;
 using TMPro;
 using UnityEngine.Events;
 

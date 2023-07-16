@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace AiGalleryVR.ImageHandler
+namespace ImmersiveGalleryAI.ImageHandler
 {
     public class ImageGenerator : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using OpenAI;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace AiGalleryVR.Web
+namespace ImmersiveGalleryAI.Web
 {
     public class WebManager : IWebManager
     {

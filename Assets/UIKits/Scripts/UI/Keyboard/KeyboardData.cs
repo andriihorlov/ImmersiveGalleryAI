@@ -1,4 +1,4 @@
-﻿using AiGalleryVR.Keyboard;
+﻿using ImmersiveGalleryAI.Keyboard;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
