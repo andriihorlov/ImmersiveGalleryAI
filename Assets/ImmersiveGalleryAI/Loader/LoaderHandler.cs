@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace ImmersiveGalleryAI.Loader
 {
-    public class Loader : MonoBehaviour
+    public class LoaderHandler : MonoBehaviour
     {
         [SerializeField] private Image _loaderImage;
 

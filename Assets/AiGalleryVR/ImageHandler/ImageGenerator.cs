@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
-using AiGalleryVR.Keyboard;
-using AiGalleryVR.Web;
+using ImmersiveGalleryAI.Keyboard;
+using ImmersiveGalleryAI.Loader;
+using ImmersiveGalleryAI.Web;
 using Oculus.Voice;
 using TMPro;
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace AiGalleryVR.ImageHandler
         [SerializeField] private TMP_InputField _inputField;
         [SerializeField] private Button _requestImageButton;
         [SerializeField] private Image _resultedImage;
-        [SerializeField] private Loader.Loader _loadingLabel;
+        [SerializeField] private LoaderHandler _loadingLabel;
         [SerializeField] private Button _voiceButton;
 
 #region Physical buttons
