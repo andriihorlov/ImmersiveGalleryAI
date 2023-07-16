@@ -542,8 +542,9 @@ MonoBehaviour:
   _requestImageButton: {fileID: 8986685473320269242}
   _resultedImage: {fileID: 2599190353804872246}
   _loadingLabel: {fileID: 7857237625950419199}
-  _inputFieldEventReceiver: {fileID: 2735198026949383264}
-  _generateButtonEventReceiver: {fileID: 1443028240439061360}
+  _voiceButton: {fileID: 0}
+  _voiceButtonText: {fileID: 0}
+  _appVoiceExperience: {fileID: 0}
 --- !u!1 &3703402599877830305
 GameObject:
   m_ObjectHideFlags: 0
@@ -633,7 +634,7 @@ GameObject:
   - component: {fileID: 8705622637252819596}
   - component: {fileID: 6901753207550826725}
   - component: {fileID: 8080865087373698677}
-  - component: {fileID: 8298847805184811506}
+  - component: {fileID: 1396327110237522469}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -740,7 +741,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &8298847805184811506
+--- !u!114 &1396327110237522469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -749,16 +750,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 5293847199793301978}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7aaf960227867044282d921171d2d7ac, type: 3}
+  m_Script: {fileID: 11500000, guid: 7951c64acb0fa62458bf30a60089fe2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
+  m_IgnoreReversedGraphics: 0
+  m_CheckFor2DOcclusion: 0
+  m_CheckFor3DOcclusion: 0
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  pointer: {fileID: 0}
-  sortOrder: 0
+  m_RaycastTriggerInteraction: 1
 --- !u!1 &6032137129757313217
 GameObject:
   m_ObjectHideFlags: 0

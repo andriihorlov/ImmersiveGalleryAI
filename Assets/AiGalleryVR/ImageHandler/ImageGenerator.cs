@@ -1,8 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using AiGalleryVR.Keyboard;
-using AiGalleryVR.Utilities;
 using AiGalleryVR.Web;
+using Oculus.Voice;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +15,7 @@ namespace AiGalleryVR.ImageHandler
         [SerializeField] private Button _requestImageButton;
         [SerializeField] private Image _resultedImage;
         [SerializeField] private Loader.Loader _loadingLabel;
+        [SerializeField] private Button _voiceButton;
 
 #region Physical buttons
 
@@ -29,6 +29,8 @@ namespace AiGalleryVR.ImageHandler
         [Inject] private IWebManager _webManager;
         [Inject] private IKeyboard _keyboard;
 
+        private bool _isMicEnabled;
+
         private void Awake()
         {
             _keyboard.Target = _inputField;
@@ -38,6 +40,11 @@ namespace AiGalleryVR.ImageHandler
         {
             _requestImageButton.onClick.AddListener(GenerateImageEventHandler);
             _inputField.onSelect.AddListener(InputFieldSelectedEventHandler);
+            _voiceButton.onClick.AddListener(VoiceClickedEventHandler);
+            
+            _appVoiceExperience.events.OnPartialTranscription.AddListener(OnRequestTranscript);
+            _appVoiceExperience.events.OnFullTranscription.AddListener(OnRequestTranscript);
+            _appVoiceExperience.events.OnStoppedListeningDueToDeactivation.AddListener(OnStoppedListeningDueToDeactivation);
 
 #region Physical button
 
@@ -51,6 +58,11 @@ namespace AiGalleryVR.ImageHandler
         {
             _requestImageButton.onClick.RemoveListener(GenerateImageEventHandler);
             _inputField.onSelect.RemoveListener(InputFieldSelectedEventHandler);
+            _voiceButton.onClick.RemoveListener(VoiceClickedEventHandler);
+            
+            _appVoiceExperience.events.OnPartialTranscription.RemoveListener(OnRequestTranscript);
+            _appVoiceExperience.events.OnFullTranscription.RemoveListener(OnRequestTranscript);
+            _appVoiceExperience.events.OnStoppedListeningDueToDeactivation.RemoveListener(OnStoppedListeningDueToDeactivation);
 
 #region Physical button
 
@@ -91,6 +103,49 @@ namespace AiGalleryVR.ImageHandler
 
             _keyboard.SetActive(true);
         }
+
+        private const string EnableMic = "Voice";
+        private const string DisableMic = "Stop";
+        [Space]
+        [SerializeField] private TextMeshProUGUI _voiceButtonText;
+        [SerializeField] private AppVoiceExperience _appVoiceExperience;
+        
+
+#region Voice recognition
+
+        private void VoiceClickedEventHandler()
+        {
+            ToggleMicButton(!_isMicEnabled);
+            
+            if (_isMicEnabled)
+            {
+                _appVoiceExperience.Activate();
+            }
+            else
+            {
+                ToggleMicButton(false);
+            }
+        }
+
+
+        private void ToggleMicButton(bool isActive)
+        {
+            _isMicEnabled = isActive;
+            _voiceButtonText.text = _isMicEnabled ? DisableMic : EnableMic;
+        }
+        
+        private void OnStoppedListeningDueToDeactivation()
+        {
+            ToggleMicButton(false);
+        }
+
+        private void OnRequestTranscript(string transcript)
+        {
+            _inputField.text = transcript;
+            ToggleMicButton(false);
+        }
+
+#endregion
 
 #region Physical button
 
