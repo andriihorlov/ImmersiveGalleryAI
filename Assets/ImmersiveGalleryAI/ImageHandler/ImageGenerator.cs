@@ -3,7 +3,6 @@ using ImmersiveGalleryAI.Keyboard;
 using ImmersiveGalleryAI.Loader;
 using ImmersiveGalleryAI.VoiceRecognition;
 using ImmersiveGalleryAI.Web;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -12,14 +11,12 @@ namespace ImmersiveGalleryAI.ImageHandler
 {
     public class ImageGenerator : MonoBehaviour
     {
-        [SerializeField] private TMP_InputField _inputField;
-        [SerializeField] private Button _requestImageButton;
         [SerializeField] private Image _resultedImage;
         [SerializeField] private LoaderHandler _loadingLabel;
-        [SerializeField] private Button _voiceButton;
-        [Space]
-        [SerializeField] private TextMeshProUGUI _voiceButtonText;
+        [SerializeField] private ControlPanel _controlPanel;
 
+        private bool _isMicEnabled;
+        
 #region Physical buttons
 
         // [Header("Physical buttons")]
@@ -28,26 +25,22 @@ namespace ImmersiveGalleryAI.ImageHandler
         //
         // [SerializeField] private TriggerEventReceiver _generateButtonEventReceiver;
 #endregion
-
-        private const string EnableMic = "Voice";
-        private const string DisableMic = "Stop";
         
         [Inject] private IWebManager _webManager;
         [Inject] private IKeyboard _keyboard;
         [Inject] private IVoiceHandler _voiceHandler;
 
-        private bool _isMicEnabled;
 
         private void Awake()
         {
-            _keyboard.Target = _inputField;
+            _keyboard.Target = _controlPanel.InputField;
         }
 
         private void OnEnable()
         {
-            _requestImageButton.onClick.AddListener(GenerateImageEventHandler);
-            _inputField.onSelect.AddListener(InputFieldSelectedEventHandler);
-            _voiceButton.onClick.AddListener(VoiceClickedEventHandler);
+            _controlPanel.GenerateImageClicked += GenerateImageEventHandler;
+            _controlPanel.VoiceClicked += VoiceClickedEventHandler;
+            _controlPanel.InputFieldSelected += InputFieldSelectedEventHandler;
 
             _voiceHandler.TranscriptionDoneEvent += OnRequestTranscript;
             _voiceHandler.StoppedListeningEvent += OnStoppedListeningDueToDeactivation;
@@ -62,9 +55,9 @@ namespace ImmersiveGalleryAI.ImageHandler
 
         private void OnDisable()
         {
-            _requestImageButton.onClick.RemoveListener(GenerateImageEventHandler);
-            _inputField.onSelect.RemoveListener(InputFieldSelectedEventHandler);
-            _voiceButton.onClick.RemoveListener(VoiceClickedEventHandler);
+            _controlPanel.GenerateImageClicked -= GenerateImageEventHandler;
+            _controlPanel.VoiceClicked -= VoiceClickedEventHandler;
+            _controlPanel.InputFieldSelected -= InputFieldSelectedEventHandler;
             
             _voiceHandler.TranscriptionDoneEvent -= OnRequestTranscript;
             _voiceHandler.StoppedListeningEvent -= OnStoppedListeningDueToDeactivation;
@@ -77,29 +70,21 @@ namespace ImmersiveGalleryAI.ImageHandler
 #endregion
         }
 
-        public void SetActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
-            _keyboard.SetActive(isActive);
-        }
-
         private async void GenerateImageEventHandler()
         {
             _resultedImage.sprite = null;
-            _requestImageButton.enabled = false;
-            _inputField.enabled = false;
+            
             _loadingLabel.SetActive(true);
-
-            Task<Sprite> resultedSprite = _webManager.GenerateImageEventHandler(_inputField.text);
+            _controlPanel.ToggleButtons(false);
+            Task<Sprite> resultedSprite = _webManager.GenerateImageEventHandler(_controlPanel.InputField.text);
             await resultedSprite;
 
             _resultedImage.sprite = resultedSprite.Result;
-            _requestImageButton.enabled = true;
-            _inputField.enabled = true;
+            _controlPanel.ToggleButtons(true);
             _loadingLabel.SetActive(false);
         }
 
-        private void InputFieldSelectedEventHandler(string arg0)
+        private void InputFieldSelectedEventHandler()
         {
             if (_keyboard.IsActive)
             {
@@ -126,13 +111,6 @@ namespace ImmersiveGalleryAI.ImageHandler
             }
         }
 
-
-        private void ToggleMicButton(bool isActive)
-        {
-            _isMicEnabled = isActive;
-            _voiceButtonText.text = _isMicEnabled ? DisableMic : EnableMic;
-        }
-        
         private void OnStoppedListeningDueToDeactivation()
         {
             ToggleMicButton(false);
@@ -140,8 +118,14 @@ namespace ImmersiveGalleryAI.ImageHandler
 
         private void OnRequestTranscript(string transcript)
         {
-            _inputField.text = transcript;
+            _controlPanel.InputField.text = transcript;
             ToggleMicButton(false);
+        }
+
+        private void ToggleMicButton(bool isActive)
+        {
+            _isMicEnabled = isActive;
+            _controlPanel.ToggleMicText(isActive);
         }
 
 #endregion
