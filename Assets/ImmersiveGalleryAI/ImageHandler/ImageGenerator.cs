@@ -23,16 +23,6 @@ namespace ImmersiveGalleryAI.ImageHandler
         private Texture2D _currentTexture;
         private bool _isMicEnabled;
 
-#region Physical buttons
-
-        // [Header("Physical buttons")]
-        // [SerializeField]
-        // private TriggerEventReceiver _inputFieldEventReceiver;
-        //
-        // [SerializeField] private TriggerEventReceiver _generateButtonEventReceiver;
-
-#endregion
-
         [Inject] private IWebManager _webManager;
         [Inject] private IKeyboard _keyboard;
         [Inject] private IVoiceHandler _voiceHandler;
@@ -58,13 +48,6 @@ namespace ImmersiveGalleryAI.ImageHandler
             _voiceHandler.StoppedListeningEvent += StoppedListeningEventHandler;
 
             _openPanelButton.onClick.AddListener(OpenPanelEventHandler);
-
-#region Physical button
-
-            // _inputFieldEventReceiver.TriggerEnter += InputFieldEventHandler;
-            // _generateButtonEventReceiver.TriggerEnter += GenerateImageTriggerEventHandler;
-
-#endregion
         }
 
         private void OnDisable()
@@ -79,13 +62,6 @@ namespace ImmersiveGalleryAI.ImageHandler
             _voiceHandler.StoppedListeningEvent -= StoppedListeningEventHandler;
 
             _openPanelButton.onClick.RemoveListener(OpenPanelEventHandler);
-
-#region Physical button
-
-            // _inputFieldEventReceiver.TriggerEnter -= InputFieldEventHandler;
-            // _generateButtonEventReceiver.TriggerEnter -= GenerateImageTriggerEventHandler;
-
-#endregion
         }
 
         public void LoadPreviousImage(ImageData imageData)
@@ -193,33 +169,6 @@ namespace ImmersiveGalleryAI.ImageHandler
         {
             GenerateImageEventHandler();
         }
-
-#endregion
-
-#region Physical button
-
-        // private void InputFieldEventHandler(Collider otherCollider)
-        // {
-        //     if (!otherCollider.CompareTag("Hand"))
-        //     {
-        //         return;
-        //     }
-        //
-        //     if (!_keyboard.IsActive)
-        //     {
-        //         _keyboard.SetActive(true);
-        //     }
-        // }
-        //
-        // private void GenerateImageTriggerEventHandler(Collider otherCollider)
-        // {
-        //     if (!otherCollider.CompareTag("Hand"))
-        //     {
-        //         return;
-        //     }
-        //     
-        //     GenerateImageEventHandler();
-        // }
 
 #endregion
     }
