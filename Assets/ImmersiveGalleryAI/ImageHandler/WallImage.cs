@@ -11,7 +11,7 @@ using Zenject;
 
 namespace ImmersiveGalleryAI.ImageHandler
 {
-    public class ImageGenerator : MonoBehaviour
+    public class WallImage : MonoBehaviour
     {
         [SerializeField] private int _wallId;
         [SerializeField] private Image _resultedImage;

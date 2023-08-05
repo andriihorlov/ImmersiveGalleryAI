@@ -10,7 +10,7 @@ namespace ImmersiveGalleryAI
 {
     public class AppController : MonoBehaviour
     {
-        [SerializeField] private List<ImageGenerator> _images;
+        [SerializeField] private List<WallImage> _images;
         
         [Inject] private IDataManager _dataManager;
 
@@ -33,7 +33,7 @@ namespace ImmersiveGalleryAI
 
             foreach (ImageData imageData in _dataManager.Settings.ImagesData)
             {
-                ImageGenerator targetWall = _images.FirstOrDefault(t => t.WallId.Equals(imageData.WallId));
+                WallImage targetWall = _images.FirstOrDefault(t => t.WallId.Equals(imageData.WallId));
                 if (targetWall != null)
                 {
                     targetWall.LoadPreviousImage(imageData);
