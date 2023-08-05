@@ -10,6 +10,7 @@ namespace ImmersiveGalleryAI.Data
         public string FileName;
         public byte[] FileContent;
         public string FilePath;
+        public string Description;
     }
 
     [Serializable]

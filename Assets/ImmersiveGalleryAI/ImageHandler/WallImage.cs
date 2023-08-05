@@ -84,12 +84,14 @@ namespace ImmersiveGalleryAI.ImageHandler
             _resultedImage.sprite = CreateSprite(_currentTexture);
             _controlPanel.ToggleButtons(true);
             _loadingLabel.SetActive(false);
-         
-            if (_currentTexture != null)
+
+            if (_currentTexture == null)
             {
-                _currentImage = new ImageData {FileContent = _currentTexture.EncodeToJPG(), WallId = _wallId};
-                _dataManager.SaveImage(_currentImage);
-            } 
+                return;
+            }
+
+            _currentImage = new ImageData {FileContent = _currentTexture.EncodeToJPG(), WallId = _wallId, Description = _controlPanel.InputField.text};
+            _dataManager.SaveImage(_currentImage);
         }
 
         private void InputFieldSelectedEventHandler()
@@ -113,9 +115,13 @@ namespace ImmersiveGalleryAI.ImageHandler
             _dataManager.ShareImage(_currentImage);
         }
         
+        [ContextMenu("Delete currentImage")]
         private void DeleteClickedEventHandler()
         {
             _dataManager.DeleteImage(_currentImage);
+            _currentImage = null;
+            _currentTexture = null;
+            _resultedImage.sprite = null;
         }
 
 
