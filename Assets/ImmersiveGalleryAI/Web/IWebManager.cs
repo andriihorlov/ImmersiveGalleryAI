@@ -5,7 +5,7 @@ namespace ImmersiveGalleryAI.Web
 {
     public interface IWebManager
     {
-        Task<Sprite> GenerateImageEventHandler(string text);
+        Task<Texture2D> GenerateImageEventHandler(string text);
         void Init(Sprite [] randomSprites, bool isAi);
     }
 }

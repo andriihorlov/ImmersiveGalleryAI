@@ -15,13 +15,13 @@ namespace ImmersiveGalleryAI.Web
         
         private int _randomIndex = 0;
 
-        public async Task<Sprite> GenerateImageEventHandler(string text)
+        public async Task<Texture2D> GenerateImageEventHandler(string text)
         {
-            Sprite resultedSprite = null;
+            Texture2D resultedSprite = null;
         
             if (_isAi)
             {
-                Task<Sprite> resulted = GenerateImageAi(text);
+                Task<Texture2D> resulted = GenerateImageAi(text);
                 await resulted;
                 resultedSprite = resulted.Result;
             }
@@ -41,7 +41,7 @@ namespace ImmersiveGalleryAI.Web
             _isAi = isAi;
         }
 
-        private Sprite GetNextImage() => _randomSprites[_randomIndex];
+        private Texture2D GetNextImage() => _randomSprites[_randomIndex].texture;
         
         private int GetNextIndex()
         {
@@ -56,7 +56,7 @@ namespace ImmersiveGalleryAI.Web
         
         //private int GetSpriteIndex() => Random.Range(0, _randomSprites.Length - 1);
         
-        private async Task<Sprite> GenerateImageAi(string text)
+        private async Task<Texture2D> GenerateImageAi(string text)
         {
             CreateImageResponse response = await _openAi.CreateImage(new CreateImageRequest
             {
@@ -64,7 +64,7 @@ namespace ImmersiveGalleryAI.Web
                 Size = ImageSize.Size256
             });
         
-            Sprite createdSprite = null;
+            Texture2D createdTexture = null;
         
             if (response.Data is {Count: > 0})
             {
@@ -75,24 +75,27 @@ namespace ImmersiveGalleryAI.Web
         
                 request.SetRequestHeader("Access-Control-Allow-Origin", "*");
                 request.SendWebRequest();
-        
-                while (!request.isDone) await Task.Yield();
-                createdSprite = CreateSprite(request.downloadHandler.data);
+
+                while (!request.isDone)
+                {
+                    await Task.Yield();
+                }
+                createdTexture = CreateTexture(request.downloadHandler.data);
             }
             else
             {
                 Debug.LogWarning("No image was created from this prompt.");
             }
         
-            return createdSprite;
+            return createdTexture;
         }
         
-        private Sprite CreateSprite(byte[] imageData)
+        private Texture2D CreateTexture(byte[] imageData)
         {
             Texture2D texture = new Texture2D(2, 2);
             texture.LoadImage(imageData);
-            Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 256, 256), Vector2.zero, 1f);
-            return sprite;
+            texture.Apply();
+            return texture;
         }
     }
 }

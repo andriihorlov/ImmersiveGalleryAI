@@ -115,7 +115,7 @@ namespace VRUiKits.Utils
                 _keyboardData.CanvasGroup.alpha = targetAlpha;
                 return;
             }
-            
+
             _keyboardData.CanvasGroup.DOFade(targetAlpha, FadeDuration);
         }
 
