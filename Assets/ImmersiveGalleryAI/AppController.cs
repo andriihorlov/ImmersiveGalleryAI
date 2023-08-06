@@ -92,9 +92,14 @@ namespace ImmersiveGalleryAI
             }
             
             _currentImagePanel = wallImage;
-            _keyboard.Target = wallImage.ControlPanel.InputField;
             wallImage.ControlPanel.InputFieldSelected += InputFieldSelectedEventHandler;
             wallImage.ControlPanel.VoiceClicked += VoiceClickedEventHandler;
+            
+            _keyboard.Target = wallImage.ControlPanel.InputField;
+            if (_keyboard.IsActive)
+            {
+                _keyboard.ChangePosition(_user.CameraRigTransform);
+            }
         }
         
         private void InputFieldSelectedEventHandler()
