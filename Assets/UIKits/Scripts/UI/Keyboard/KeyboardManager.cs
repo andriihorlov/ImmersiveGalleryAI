@@ -98,9 +98,16 @@ namespace VRUiKits.Utils
 
         public void ChangePosition(Transform pivot)
         {
-            _keyboardTransform.SetPositionAndRotation(pivot.position, pivot.rotation);
-            _keyboardTransform.SetParent(pivot.parent);
-            _keyboardTransform.localScale = pivot.localScale;
+            Vector3 targetPosition = pivot.position + pivot.forward * 1.3f;
+            targetPosition.y = pivot.position.y - 0.5f;
+            _keyboardTransform.position = targetPosition;
+            _keyboardTransform.LookAt(pivot);
+
+            Vector3 newEuler = _keyboardTransform.rotation.eulerAngles;
+            newEuler.x *= -1f;
+            newEuler.y = pivot.eulerAngles.y;
+            newEuler.z = 0f;
+            _keyboardTransform.eulerAngles = newEuler;
         }
 
         public void SetActive(bool isActive, bool isImmediate = false)

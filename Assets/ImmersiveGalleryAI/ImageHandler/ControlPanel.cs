@@ -18,16 +18,16 @@ namespace ImmersiveGalleryAI.ImageHandler
         private const string DisableMic = "Stop";
 
         private readonly Vector3 DefaultScale = Vector3.one;
-        
-        private const float AnimationDuration = 1.5f;
+
+        private const float ShowAnimationDuration = 1.5f;
+        private const float HideAnimationDuration = 0.5f;
         private const float DefaultScaleHeight = 1f;
         private const float HideScaleHeight = 0f;
 
         [SerializeField] private TMP_InputField _inputField;
         [SerializeField] private Button _requestImageButton;
         [SerializeField] private Button _voiceButton;
-        [Space]
-        [SerializeField] private Button _shareImageButton;
+        [Space] [SerializeField] private Button _shareImageButton;
         [SerializeField] private Button _deleteImageButton;
         [Space] [SerializeField] private TextMeshProUGUI _voiceButtonText;
 
@@ -46,7 +46,7 @@ namespace ImmersiveGalleryAI.ImageHandler
             _requestImageButton.onClick.AddListener(GenerateImageEventHandler);
             _inputField.onSelect.AddListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.AddListener(VoiceClickedEventHandler);
-            
+
             _shareImageButton.onClick.AddListener(ShareClickedEventHandler);
             _deleteImageButton.onClick.AddListener(DeleteClickedEventHandler);
         }
@@ -56,7 +56,7 @@ namespace ImmersiveGalleryAI.ImageHandler
             _requestImageButton.onClick.RemoveListener(GenerateImageEventHandler);
             _inputField.onSelect.RemoveListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.RemoveListener(VoiceClickedEventHandler);
-            
+
             _shareImageButton.onClick.RemoveListener(ShareClickedEventHandler);
             _deleteImageButton.onClick.RemoveListener(DeleteClickedEventHandler);
         }
@@ -76,7 +76,7 @@ namespace ImmersiveGalleryAI.ImageHandler
         {
             Vector3 scale = DefaultScale;
             scale.y = isActive ? DefaultScaleHeight : HideScaleHeight;
-            
+
             if (isImmediate)
             {
                 gameObject.SetActive(isActive);
@@ -90,7 +90,7 @@ namespace ImmersiveGalleryAI.ImageHandler
             }
 
             _currentTransform
-                .DOScaleY(scale.y, AnimationDuration)
+                .DOScaleY(scale.y, isActive ? ShowAnimationDuration : HideAnimationDuration)
                 .OnComplete(() =>
                 {
                     if (!isActive)
