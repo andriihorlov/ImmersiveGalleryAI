@@ -13,7 +13,7 @@ namespace ImmersiveGalleryAI
     public class AppController : MonoBehaviour
     {
         [SerializeField] private List<WallImage> _images;
-        
+
         private WallImage _currentImagePanel;
         private bool _isMicEnabled;
 
@@ -47,7 +47,7 @@ namespace ImmersiveGalleryAI
         {
             _voiceHandler.TranscriptionDoneEvent -= RequestTranscriptEventHandler;
             _voiceHandler.StoppedListeningEvent -= StoppedListeningEventHandler;
-            
+
             foreach (WallImage wallImage in _images)
             {
                 wallImage.OpenedPanel -= OpenedPanelEventHandler;
@@ -85,23 +85,23 @@ namespace ImmersiveGalleryAI
                 if (_currentImagePanel != wallImage)
                 {
                     _currentImagePanel.HideControlPanel();
-                } 
-                
+                }
+
                 _currentImagePanel.ControlPanel.InputFieldSelected -= InputFieldSelectedEventHandler;
                 _currentImagePanel.ControlPanel.VoiceClicked -= VoiceClickedEventHandler;
             }
-            
+
             _currentImagePanel = wallImage;
             wallImage.ControlPanel.InputFieldSelected += InputFieldSelectedEventHandler;
             wallImage.ControlPanel.VoiceClicked += VoiceClickedEventHandler;
-            
+
             _keyboard.Target = wallImage.ControlPanel.InputField;
             if (_keyboard.IsActive)
             {
                 _keyboard.ChangePosition(_user.CameraRigTransform);
             }
         }
-        
+
         private void InputFieldSelectedEventHandler()
         {
             if (_keyboard.IsActive)
@@ -112,7 +112,7 @@ namespace ImmersiveGalleryAI
             _keyboard.ChangePosition(_user.CameraRigTransform);
             _keyboard.SetActive(true);
         }
-        
+
 #region Voice recognition
 
         private void StoppedListeningEventHandler()
@@ -148,5 +148,12 @@ namespace ImmersiveGalleryAI
 
 #endregion
 
+#if UNITY_EDITOR
+        [ContextMenu("Fetch all Wall Images")]
+        private void FetchWallImagesEditor()
+        {
+            _images = FindObjectsOfType<WallImage>().ToList();
+        }
+#endif
     }
 }

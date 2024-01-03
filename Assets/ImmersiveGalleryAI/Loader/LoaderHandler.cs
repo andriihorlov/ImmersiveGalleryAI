@@ -29,8 +29,9 @@ namespace ImmersiveGalleryAI.Loader
             // Disabling by StopCoroutine()
             while (true)
             {
+                
                 _loaderImage.fillAmount += Time.deltaTime;
-                if (_loaderImage.fillAmount > 0.98)
+                if (_loaderImage.fillAmount > 0.98f)
                 {
                     _loaderImage.fillAmount = 0f;
                 }

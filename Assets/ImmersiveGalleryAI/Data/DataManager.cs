@@ -29,6 +29,9 @@ namespace ImmersiveGalleryAI.Data
         {
             //todo: will be implemented in future
             Debug.Log($"Shared! {imageData.FileName}");
+            // NativeGallery.CheckPermission(NativeGallery.PermissionType.Write, NativeGallery.MediaType.Image);
+            // NativeGallery.SaveImageToGallery(imageData.FileContent, "Album", imageData.FileName);
+            SendEmail.Send(imageData);
         }
 
         public void LoadSettings()
