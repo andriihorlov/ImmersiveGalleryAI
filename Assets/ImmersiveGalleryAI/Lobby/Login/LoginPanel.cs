@@ -17,6 +17,7 @@ namespace ImmersiveGalleryAI.Lobby.Login
         [SerializeField] private Button _loginButton;
         [SerializeField] private Button _registrationButton;
         [SerializeField] private Button _forgetPasswordButton;
+        [SerializeField] private Button _guestButton;
 
         [Inject] private IBackend _backend;
 
@@ -25,6 +26,7 @@ namespace ImmersiveGalleryAI.Lobby.Login
             _loginButton.onClick.AddListener(LoginButtonPressed);
             _registrationButton.onClick.AddListener(RegistrationButtonPressed);
             _forgetPasswordButton.onClick.AddListener(ForgetPasswordButtonPressed);
+            _guestButton.onClick.AddListener(GuestButtonPressed);
         }
 
         private void OnDisable()
@@ -32,6 +34,7 @@ namespace ImmersiveGalleryAI.Lobby.Login
             _loginButton.onClick.RemoveListener(LoginButtonPressed);
             _registrationButton.onClick.RemoveListener(RegistrationButtonPressed);
             _forgetPasswordButton.onClick.RemoveListener(ForgetPasswordButtonPressed);
+            _guestButton.onClick.RemoveListener(GuestButtonPressed);
         }
 
         private void LoginButtonPressed()
@@ -42,6 +45,11 @@ namespace ImmersiveGalleryAI.Lobby.Login
         private void RegistrationButtonPressed()
         {
             RegistrationClickedEvent?.Invoke();
+        }
+        
+        private void GuestButtonPressed()
+        {
+            Debug.Log($"Continue as a guest");
         }
 
         private void ForgetPasswordButtonPressed()
