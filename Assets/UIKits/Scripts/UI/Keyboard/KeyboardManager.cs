@@ -6,7 +6,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using DG.Tweening;
-using ImmersiveGalleryAI.Keyboard;
+using ImmersiveGalleryAI.Common.Keyboard;
 using TMPro;
 using UnityEngine.Events;
 
