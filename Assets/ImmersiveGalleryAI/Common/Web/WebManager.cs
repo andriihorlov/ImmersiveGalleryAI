@@ -66,7 +66,7 @@ namespace ImmersiveGalleryAI.Common.Web
         
             Texture2D createdTexture = null;
         
-            if (response.Data is {Count: > 0})
+            if (response.Data.Count > 0)
             {
                 using UnityWebRequest request = new UnityWebRequest(response.Data[0].Url)
                 {
