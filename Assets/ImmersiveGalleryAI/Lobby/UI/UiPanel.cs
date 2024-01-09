@@ -1,7 +1,7 @@
 ﻿using DG.Tweening;
 using UnityEngine;
 
-namespace ImmersiveGalleryAI.Lobby.Login
+namespace ImmersiveGalleryAI.Lobby.UI
 {
     public class UiPanel : MonoBehaviour
     {
@@ -24,6 +24,12 @@ namespace ImmersiveGalleryAI.Lobby.Login
                     _canvasGroup.gameObject.SetActive(false);
                 }
             });
+        }
+
+        public void SetCanvasInteractables(bool isActive)
+        {
+            _canvasGroup.interactable = isActive;
+            _canvasGroup.blocksRaycasts = isActive;
         }
     }
 }
