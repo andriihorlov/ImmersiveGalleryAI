@@ -7,7 +7,7 @@ namespace ImmersiveGalleryAI.Common.Utilities
     public class StarsMoving : MonoBehaviour
     {
         [SerializeField] private float _rotationSpeed = 1f;
-        
+
         private XRController _xrController;
         private MeshRenderer _meshRenderer;
         private Transform _currentTransform;
@@ -21,17 +21,18 @@ namespace ImmersiveGalleryAI.Common.Utilities
             _xrController = FindObjectOfType<XRController>();
             _meshRenderer = GetComponent<MeshRenderer>();
             int random = Random.Range(0, 99);
-            switch (random)
+
+            if (random < 30)
             {
-                case < 30:
-                    _rotationDirection.x = 1f;
-                    break;
-                case > 30 when random < 60f:
-                    _rotationDirection.y = 1f;
-                    break;
-                default:
-                    _rotationDirection.z = 1f;
-                    break;
+                _rotationDirection.x = 1f;
+            }
+            else if (random > 30 && random < 60)
+            {
+                _rotationDirection.y = 1f;
+            }
+            else
+            {
+                _rotationDirection.z = 1f;
             }
         }
 
@@ -41,7 +42,7 @@ namespace ImmersiveGalleryAI.Common.Utilities
             {
                 ToggleMeshVisibility();
             }
-            
+
             if (_meshRenderer.enabled)
             {
                 _currentTransform.localEulerAngles += Time.deltaTime * _rotationDirection * _rotationSpeed;

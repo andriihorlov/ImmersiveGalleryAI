@@ -30,7 +30,7 @@ namespace ImmersiveGalleryAI.Main.Data
             };
             try
             {
-                using SmtpClient smtpServer = new("smtp.gmail.com", 25);
+                using SmtpClient smtpServer = new SmtpClient("smtp.gmail.com", 25);
                 ICredentialsByHost credentialsByHost = new NetworkCredential(Email, Password);
                 smtpServer.Credentials = credentialsByHost;
                 smtpServer.EnableSsl = true;
