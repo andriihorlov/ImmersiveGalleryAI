@@ -1,13 +1,13 @@
 using ImmersiveGalleryAI.Common.Web;
 using Zenject;
 
-namespace ImmersiveGalleryAI.Common.User
+namespace ImmersiveGalleryAI.Common.PlayerLocation
 {
-    public class UserInstaller : MonoInstaller<WebInstaller>
+    public class PlayerLocationInstaller : MonoInstaller<WebInstaller>
     {
         public override void InstallBindings()
         {
-            Container.Bind<IUser>().To<UserManager>().AsSingle();
+            Container.Bind<IPlayerLocation>().To<PlayerLocationManager>().AsSingle();
         }
     }
 }

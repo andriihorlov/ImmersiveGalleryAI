@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace ImmersiveGalleryAI.Common.User
+namespace ImmersiveGalleryAI.Common.PlayerLocation
 {
-    public interface IUser 
+    public interface IPlayerLocation 
     {
         Transform CameraRigTransform { get; }
-        void Init(UserData userData);
+        void Init(PlayerLocationData playerLocationData);
     }
 }
