@@ -110,7 +110,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         }
 
         [ContextMenu("Fill random values")]
-        private void FillRandom()
+        public void FillRandom()
         {
             byte maxCharacters = 8;
             string login = "User_" + Random.Range(0, byte.MaxValue);
@@ -125,6 +125,18 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _repeatPasswordInputField.text = _passwordInputField.text;
         }
 
+        public RegistrationData GetValues()
+        {
+            return new RegistrationData {Email = _emailInputField.text, Login = _loginInputField.text, Password = _passwordInputField.text};
+        }
+
+        [Serializable]
+        public class RegistrationData
+        {
+            public string Email;
+            public string Login;
+            public string Password;
+        }
 #endif
     }
 }

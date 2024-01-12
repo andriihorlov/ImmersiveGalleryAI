@@ -28,6 +28,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.LoginClickedEvent += LoginEventHandler;
             _loginPanel.GuestClickedEvent += GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent += BackToLoginPanel;
+            _recoveryPanel.BackToLoginEvent += ForgetPanelBackEventHandler;
         }
 
         private void OnDisable()
@@ -37,6 +38,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.LoginClickedEvent -= LoginEventHandler;
             _loginPanel.GuestClickedEvent -= GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent -= BackToLoginPanel;
+            _recoveryPanel.BackToLoginEvent -= ForgetPanelBackEventHandler;
         }
 
         private void InvokeRegistration()
@@ -49,6 +51,12 @@ namespace ImmersiveGalleryAI.Lobby.UI
         {
             _registrationPanel.SetActive(false);
             _loginPanel.SetActive(true);
+        }
+        
+        private void ForgetPanelBackEventHandler()
+        {
+            _recoveryPanel.SetActive(false);
+            _loginPanel.SetCanvasInteractables(true);
         }
 
         private void InvokeRecoveryPanel()

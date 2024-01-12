@@ -73,6 +73,11 @@ namespace ImmersiveGalleryAI.Lobby.UI
         {
             ForgetPasswordButtonPressed();
         }
+        
+        public void GuestModeEditor()
+        {
+            GuestButtonPressed();
+        }
 #endif
     }
 }
