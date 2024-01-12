@@ -35,9 +35,9 @@ namespace ImmersiveGalleryAI.Common.Backend
             return isRegistrationSucceed;
         }
 
-        public void Login(string login, string password)
+        public async UniTask<bool> Login(string login, string password)
         {
-            TryLogin(login, password);
+            return await TryLogin(login, password);
         }
 
         public async UniTask<bool> RecoverPassword(string recoverEmail)
@@ -52,25 +52,25 @@ namespace ImmersiveGalleryAI.Common.Backend
             return isLoginExistTask;
         }
 
-        private async void TryLogin(string login, string password)
+        private async UniTask<bool> TryLogin(string login, string password)
         {
             string userEmail = await _backendDataBase.GetUserEmail(login);
 
             if (string.IsNullOrEmpty(userEmail))
             {
                 Logger.WriteLog("Can't logged!", false);
-                return;
+                return false;
             }
 
             bool isLoginSucceed = await _backendAuth.Login(userEmail, password);
             if (isLoginSucceed)
             {
                 Logger.WriteLog("Logged In!");
+                return true;
             }
-            else
-            {
-                Logger.WriteLog("Can't logged!", false);
-            }
+
+            Logger.WriteLog("Can't logged!", false);
+            return false;
         }
     }
 }

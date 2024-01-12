@@ -9,6 +9,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
     {
         public event Action RegistrationClickedEvent;
         public event Action ForgetPasswordClickedEvent;
+        public event Action GuestClickedEvent;
         public event Action<string, string> LoginClickedEvent;
 
         [SerializeField] private TMP_InputField _loginInputField;
@@ -47,7 +48,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         private void GuestButtonPressed()
         {
-            Debug.Log($"Continue as a guest");
+            GuestClickedEvent?.Invoke();
         }
 
         private void ForgetPasswordButtonPressed()

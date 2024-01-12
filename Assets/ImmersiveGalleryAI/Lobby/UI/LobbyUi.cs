@@ -1,4 +1,5 @@
 ﻿using ImmersiveGalleryAI.Common.Backend;
+using ImmersiveGalleryAI.Common.SceneManagement;
 using UnityEngine;
 using Zenject;
 
@@ -11,6 +12,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         [SerializeField] private ForgetPanel _recoveryPanel;
 
         [Inject] private IBackend _backend;
+        [Inject] private ISceneManager _sceneManager;
 
         private void Awake()
         {
@@ -24,6 +26,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.RegistrationClickedEvent += InvokeRegistration;
             _loginPanel.ForgetPasswordClickedEvent += InvokeRecoveryPanel;
             _loginPanel.LoginClickedEvent += LoginEventHandler;
+            _loginPanel.GuestClickedEvent += GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent += BackToLoginPanel;
         }
 
@@ -32,6 +35,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.RegistrationClickedEvent -= InvokeRegistration;
             _loginPanel.ForgetPasswordClickedEvent -= InvokeRecoveryPanel;
             _loginPanel.LoginClickedEvent -= LoginEventHandler;
+            _loginPanel.GuestClickedEvent -= GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent -= BackToLoginPanel;
         }
 
@@ -46,16 +50,35 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _registrationPanel.SetActive(false);
             _loginPanel.SetActive(true);
         }
-        
+
         private void InvokeRecoveryPanel()
         {
             _recoveryPanel.SetActive(true);
             _loginPanel.SetCanvasInteractables(false);
         }
-        
+
         private void LoginEventHandler(string login, string password)
         {
-            _backend.Login(login, password);
+            TryLoggedIn(login, password);
+        }
+        
+        private void GuestLoginEventHandler()
+        {
+            LoadMainScene();
+        }
+
+        private async void TryLoggedIn(string login, string password)
+        {
+            bool isLoggedSucceed = await _backend.Login(login, password);
+            if (isLoggedSucceed)
+            {
+                LoadMainScene();
+            }
+        }
+
+        private void LoadMainScene()
+        {
+            _sceneManager.LoadScene(SceneType.Main);
         }
     }
 }
