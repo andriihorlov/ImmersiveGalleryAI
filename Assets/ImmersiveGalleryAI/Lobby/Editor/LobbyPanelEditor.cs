@@ -24,7 +24,7 @@ namespace ImmersiveGalleryAI.Lobby.Editor
         private ForgetPanel _forgetPanel;
         private ForgetPanel ForgetPanel => _forgetPanel ??= FindObjectOfType<ForgetPanel>();
 
-        private PanelType _currentPanelType;
+        private PanelType _currentPanelType = PanelType.Login;
 
         private string _startLogin;
         private string _startPassword;
@@ -39,27 +39,22 @@ namespace ImmersiveGalleryAI.Lobby.Editor
 
         private bool _isCustomRegistration;
 
-        private void OnEnable()
-        {
-            _currentPanelType = PanelType.Login;
-        }
-
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            // if (!Application.isPlaying)
-            // {
-            //     return;
-            // }
+            if (!Application.isPlaying)
+            {
+                return;
+            }
 
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
 
             switch (_currentPanelType)
             {
                 case PanelType.Login:
-//                    LoginPanelHandler();
-                //                  break;
+                    LoginPanelHandler();
+                                  break;
                 case PanelType.Registration:
                     RegistrationPanelHandler();
                     RegistrationPanel.BackToLoginEvent += RegistrationBackButtonHandler;
