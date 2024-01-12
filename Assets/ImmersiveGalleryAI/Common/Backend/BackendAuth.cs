@@ -28,5 +28,11 @@ namespace ImmersiveGalleryAI.Common.Backend
             await UniTask.WaitUntil(() => registerTask.IsCompleted);
             return registerTask.IsCompletedSuccessfully;
         }
+
+        public async UniTask<bool> Login(string userEmail, string password)
+        {
+            AuthResult login = await FirebaseAuth.SignInWithEmailAndPasswordAsync(userEmail, password);
+            return login.User != null;
+        }
     }
 }

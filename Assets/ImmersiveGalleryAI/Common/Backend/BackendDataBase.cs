@@ -11,25 +11,42 @@ namespace ImmersiveGalleryAI.Common.Backend
     public class BackendDataBase
     {
         private const string DataBaseUsers = "Users";
+        private const string DataBaseLoginName = "login";
+        private const string DataBaseEmailName = "email";
 
         private DatabaseReference _firebaseGetDatabaseReference;
         private DatabaseReference FirebaseGetDataBaseReference => _firebaseGetDatabaseReference ??= FirebaseDatabase.DefaultInstance.GetReference(DataBaseUsers);
-        
+
         public async UniTask AddToDatabase(string login, string email)
         {
             UserModel userModel = new UserModel {login = login, email = email, imagesPath = new string[0]};
             DatabaseReference databaseReference = FirebaseGetDataBaseReference.Push();
-            await databaseReference.SetRawJsonValueAsync(JsonUtility.ToJson(userModel)).ContinueWithOnMainThread(task => { Logger.WriteTask(task, "Add data to DB"); });
+            await databaseReference.SetRawJsonValueAsync(JsonUtility.ToJson(userModel)).ContinueWithOnMainThread(task =>
+            {
+                Logger.WriteTask(task, "Add data to DB");
+            });
         }
 
-        /// <summary>
-        /// have to be implemented
-        /// </summary>
-        /// <returns></returns>
         public async UniTask<bool> IsLoginExist(string login)
         {
-            bool isLoginExist = false;
+            return await GetUser(login) != null;
+        }
 
+        public async UniTask<string> GetUserEmail(string login)
+        {
+            string userEmail = string.Empty;
+            DataSnapshot user = await GetUser(login);
+            if (user != null)
+            {
+                userEmail = GetSnapshotFieldData(user, DataBaseEmailName);
+            }
+
+            return userEmail;
+        }
+
+        private async UniTask<DataSnapshot> GetUser(string login)
+        {
+            DataSnapshot targetUserSnapshot = null;
             Task jsonAsync = FirebaseGetDataBaseReference.GetValueAsync().ContinueWith(dataSnapshot =>
             {
                 if (!dataSnapshot.IsCompletedSuccessfully)
@@ -42,16 +59,23 @@ namespace ImmersiveGalleryAI.Common.Backend
 
                 foreach (DataSnapshot snapshot in resultChildren)
                 {
-                    isLoginExist = snapshot.Child("login").Value.ToString() == login;
-                    if (isLoginExist)
+                    if (GetSnapshotFieldData(snapshot, DataBaseLoginName) != login)
                     {
-                        break;
+                        continue;
                     }
+
+                    targetUserSnapshot = snapshot;
+                    break;
                 }
             });
 
             await jsonAsync;
-            return isLoginExist;
+            return targetUserSnapshot;
+        }
+
+        private string GetSnapshotFieldData(DataSnapshot dataSnapshot, string targetChild)
+        {
+            return dataSnapshot?.Child(targetChild).Value.ToString();
         }
     }
 }

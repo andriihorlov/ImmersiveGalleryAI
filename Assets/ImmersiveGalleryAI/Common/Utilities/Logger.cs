@@ -16,13 +16,22 @@ namespace ImmersiveGalleryAI.Common.Utilities
             Write(uniTask.Status == UniTaskStatus.Succeeded, processName, "UniTask get wrong.");
         }
 
+        public static void WriteLog(string processName, bool? isSuccess = null)
+        {
+            Write(!isSuccess.HasValue || isSuccess.Value, processName);
+        }
+
         private static void Write(bool isSucceed, string processName, string exception = "")
         {
             string message = $"[{processName}] ";
 
             if (!isSucceed)
             {
-                message += $"Failed, because: {exception}";
+                if (!string.IsNullOrEmpty(exception))
+                {
+                    message += $"Failed, because: {exception}";
+                }
+
                 message = message.GetColoredString(Color.red);
             }
             else

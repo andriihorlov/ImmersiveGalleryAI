@@ -74,14 +74,11 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         private async void RegistrationHandler()
         {
-            bool? isSuccess = await _backend.Registration(_loginInputField.text, _emailInputField.text, _passwordInputField.text);
-            if (isSuccess.HasValue)
+            bool isSuccess = await _backend.Registration(_loginInputField.text, _emailInputField.text, _passwordInputField.text);
+            if (isSuccess)
             {
-                if (isSuccess.Value)
-                {
-                    BackButtonClicked();
-                    return;
-                }
+                BackButtonClicked();
+                return;
             }
 
             Debug.LogError($"Registration wasn't succeed.");

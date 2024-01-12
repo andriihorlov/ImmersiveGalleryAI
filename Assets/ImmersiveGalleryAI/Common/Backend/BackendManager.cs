@@ -16,16 +16,14 @@ namespace ImmersiveGalleryAI.Common.Backend
             _backendDataBase = new BackendDataBase();
         }
 
-        public async Task<bool?> Registration(string login, string email, string password)
+        public async Task<bool> Registration(string login, string email, string password)
         {
-            bool isPossibleContinue = false;
-
-            await IsLoginExist(login).ContinueWith(isLoginExist => { isPossibleContinue = isLoginExist; });
+            bool isPossibleContinue = await IsLoginExist(login);
 
             if (isPossibleContinue)
             {
                 Debug.LogError($"User with this login already exist");
-                return null;
+                return false;
             }
 
             bool isRegistrationSucceed = await _backendAuth.Registration(email, password);
@@ -37,21 +35,42 @@ namespace ImmersiveGalleryAI.Common.Backend
             return isRegistrationSucceed;
         }
 
-        private async UniTask<bool> IsLoginExist(string login)
+        public void Login(string login, string password)
         {
-            UniTask<bool> isLoginExistTask = _backendDataBase.IsLoginExist(login);
-            bool isExist = false;
-            await isLoginExistTask.ContinueWith(isLoginExistResult => { isExist = isLoginExistResult; });
-            Logger.WriteTask(isLoginExistTask, "Is Login exist");
-            
-            return isExist;
+            TryLogin(login, password);
         }
-
-        public void Login(string login, string password) { }
 
         public async UniTask<bool> RecoverPassword(string recoverEmail)
         {
             return await _backendAuth.RecoverPassword(recoverEmail);
+        }
+
+        private async UniTask<bool> IsLoginExist(string login)
+        {
+            bool isLoginExistTask = await _backendDataBase.IsLoginExist(login);
+            Logger.WriteLog("Is LoginExist?", isLoginExistTask);
+            return isLoginExistTask;
+        }
+
+        private async void TryLogin(string login, string password)
+        {
+            string userEmail = await _backendDataBase.GetUserEmail(login);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                Logger.WriteLog("Can't logged!", false);
+                return;
+            }
+
+            bool isLoginSucceed = await _backendAuth.Login(userEmail, password);
+            if (isLoginSucceed)
+            {
+                Logger.WriteLog("Logged In!");
+            }
+            else
+            {
+                Logger.WriteLog("Can't logged!", false);
+            }
         }
     }
 }
