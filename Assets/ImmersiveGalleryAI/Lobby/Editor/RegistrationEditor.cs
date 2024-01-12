@@ -1,4 +1,4 @@
-using ImmersiveGalleryAI.Lobby.Login;
+using ImmersiveGalleryAI.Lobby.UI;
 using UnityEditor;
 using UnityEngine;
 

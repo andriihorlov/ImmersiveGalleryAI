@@ -1,4 +1,4 @@
-﻿using ImmersiveGalleryAI.Lobby.Login;
+﻿using ImmersiveGalleryAI.Lobby.UI;
 using UnityEditor;
 using UnityEngine;
 
@@ -37,7 +37,7 @@ namespace ImmersiveGalleryAI.Lobby.Editor
             
             if (GUILayout.Button("Forget password"))
             {
-                LoginPanel.RegistrationEditor();
+                LoginPanel.ForgetPasswordEditor();
             }
         }
     }
