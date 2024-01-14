@@ -4,8 +4,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using Random = UnityEngine.Random;
 
-namespace ImmersiveGalleryAI.Lobby.Login
+namespace ImmersiveGalleryAI.Lobby.UI
 {
     public class RegistrationPanel : UiPanel
     {
@@ -68,9 +69,19 @@ namespace ImmersiveGalleryAI.Lobby.Login
                 return;
             }
 
-            _backend.Registration(_emailInputField.text, _passwordInputField.text);
+            RegistrationHandler();
+        }
 
-            BackButtonClicked();
+        private async void RegistrationHandler()
+        {
+            bool isSuccess = await _backend.Registration(_loginInputField.text, _emailInputField.text, _passwordInputField.text);
+            if (isSuccess)
+            {
+                BackButtonClicked();
+                return;
+            }
+
+            Debug.LogError($"Registration wasn't succeed.");
         }
 
         private void BackButtonClicked()
@@ -98,6 +109,34 @@ namespace ImmersiveGalleryAI.Lobby.Login
             BackButtonClicked();
         }
 
+        [ContextMenu("Fill random values")]
+        public void FillRandom()
+        {
+            byte maxCharacters = 8;
+            string login = "User_" + Random.Range(0, byte.MaxValue);
+            _loginInputField.text = login;
+            if (login.Length > maxCharacters)
+            {
+                login = login.Substring(maxCharacters);
+            }
+
+            _emailInputField.text = login + "@fake.com";
+            _passwordInputField.text = login + "!!!";
+            _repeatPasswordInputField.text = _passwordInputField.text;
+        }
+
+        public RegistrationData GetValues()
+        {
+            return new RegistrationData {Email = _emailInputField.text, Login = _loginInputField.text, Password = _passwordInputField.text};
+        }
+
+        [Serializable]
+        public class RegistrationData
+        {
+            public string Email;
+            public string Login;
+            public string Password;
+        }
 #endif
     }
 }

@@ -2,19 +2,19 @@ using Unity.XR.CoreUtils;
 using UnityEngine;
 using Zenject;
 
-namespace ImmersiveGalleryAI.Common.User
+namespace ImmersiveGalleryAI.Common.PlayerLocation
 {
-    public class UserData : MonoBehaviour
+    public class PlayerLocationData : MonoBehaviour
     {
         [SerializeField] private XROrigin _xrOrigin;
 
-        [Inject] private IUser _user;
+        [Inject] private IPlayerLocation _playerLocation;
         
         public Transform CameraRigTransform => _xrOrigin.Camera.transform;
 
         private void Start()
         {
-            _user.Init(this);
+            _playerLocation.Init(this);
         }
     }
 }

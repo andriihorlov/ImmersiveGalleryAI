@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ImmersiveGalleryAI.Common.Keyboard;
-using ImmersiveGalleryAI.Common.User;
+using ImmersiveGalleryAI.Common.PlayerLocation;
 using ImmersiveGalleryAI.Common.VoiceRecognition;
 using ImmersiveGalleryAI.Main.Data;
 using ImmersiveGalleryAI.Main.ImageHandler;
@@ -20,7 +20,7 @@ namespace ImmersiveGalleryAI.Main
         [Inject] private IVoiceHandler _voiceHandler;
         [Inject] private IDataManager _dataManager;
         [Inject] private IKeyboard _keyboard;
-        [Inject] private IUser _user;
+        [Inject] private IPlayerLocation _playerLocation;
 
         private void Awake()
         {
@@ -98,7 +98,7 @@ namespace ImmersiveGalleryAI.Main
             _keyboard.Target = wallImage.ControlPanel.InputField;
             if (_keyboard.IsActive)
             {
-                _keyboard.ChangePosition(_user.CameraRigTransform);
+                _keyboard.ChangePosition(_playerLocation.CameraRigTransform);
             }
         }
 
@@ -109,7 +109,7 @@ namespace ImmersiveGalleryAI.Main
                 return;
             }
 
-            _keyboard.ChangePosition(_user.CameraRigTransform);
+            _keyboard.ChangePosition(_playerLocation.CameraRigTransform);
             _keyboard.SetActive(true);
         }
 

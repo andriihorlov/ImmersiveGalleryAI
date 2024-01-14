@@ -1,39 +1,76 @@
 ﻿using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using Firebase.Auth;
 using UnityEngine;
+using Logger = ImmersiveGalleryAI.Common.Utilities.Logger;
 
 namespace ImmersiveGalleryAI.Common.Backend
 {
     public class BackendManager : IBackend
     {
-        private FirebaseAuth _firebaseAuth;
-        private FirebaseAuth FirebaseAuth => _firebaseAuth ??= FirebaseAuth.DefaultInstance;
-        
-        public void Registration(string email, string password)
+        private readonly BackendAuth _backendAuth;
+        private readonly BackendDataBase _backendDataBase;
+
+        public BackendManager()
         {
-            Task<AuthResult> registerTask = FirebaseAuth.CreateUserWithEmailAndPasswordAsync(email, password);
-            TryToRegistration(registerTask);
+            _backendAuth = new BackendAuth();
+            _backendDataBase = new BackendDataBase();
         }
 
-        public void Login(string login, string password)
+        public async Task<bool> Registration(string login, string email, string password)
         {
-            
+            bool isPossibleContinue = await IsLoginExist(login);
+
+            if (isPossibleContinue)
+            {
+                Debug.LogError($"User with this login already exist");
+                return false;
+            }
+
+            bool isRegistrationSucceed = await _backendAuth.Registration(email, password);
+            if (isRegistrationSucceed)
+            {
+                await _backendDataBase.AddToDatabase(login, email);
+            }
+
+            return isRegistrationSucceed;
         }
 
-        private async void TryToRegistration(Task<AuthResult> registerTask)
+        public async UniTask<bool> Login(string login, string password)
         {
-            await UniTask.Yield();
-            await UniTask.WaitUntil(() => registerTask.IsCompleted);
+            return await TryLogin(login, password);
+        }
 
-            if (registerTask.Exception != null)
+        public async UniTask<bool> RecoverPassword(string recoverEmail)
+        {
+            return await _backendAuth.RecoverPassword(recoverEmail);
+        }
+
+        private async UniTask<bool> IsLoginExist(string login)
+        {
+            bool isLoginExistTask = await _backendDataBase.IsLoginExist(login);
+            Logger.WriteLog("Is LoginExist?", isLoginExistTask);
+            return isLoginExistTask;
+        }
+
+        private async UniTask<bool> TryLogin(string login, string password)
+        {
+            string userEmail = await _backendDataBase.GetUserEmail(login);
+
+            if (string.IsNullOrEmpty(userEmail))
             {
-                Debug.LogWarning($"Registration failed, because: {registerTask.Exception.Message}");
+                Logger.WriteLog("Can't logged!", false);
+                return false;
             }
-            else
+
+            bool isLoginSucceed = await _backendAuth.Login(userEmail, password);
+            if (isLoginSucceed)
             {
-                Debug.Log($"Registration succeed! {registerTask.Result.Credential} | {registerTask.Result.User.Email} | {registerTask.Result.User.DisplayName}");
+                Logger.WriteLog("Logged In!");
+                return true;
             }
+
+            Logger.WriteLog("Can't logged!", false);
+            return false;
         }
     }
 }

@@ -1,15 +1,16 @@
 using System;
-using ImmersiveGalleryAI.Common.Backend;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
-namespace ImmersiveGalleryAI.Lobby.Login
+namespace ImmersiveGalleryAI.Lobby.UI
 {
     public class LoginPanel : UiPanel
     {
         public event Action RegistrationClickedEvent;
+        public event Action ForgetPasswordClickedEvent;
+        public event Action GuestClickedEvent;
+        public event Action<string, string> LoginClickedEvent;
 
         [SerializeField] private TMP_InputField _loginInputField;
         [SerializeField] private TMP_InputField _passwordInputField;
@@ -18,8 +19,6 @@ namespace ImmersiveGalleryAI.Lobby.Login
         [SerializeField] private Button _registrationButton;
         [SerializeField] private Button _forgetPasswordButton;
         [SerializeField] private Button _guestButton;
-
-        [Inject] private IBackend _backend;
 
         private void OnEnable()
         {
@@ -39,38 +38,45 @@ namespace ImmersiveGalleryAI.Lobby.Login
 
         private void LoginButtonPressed()
         {
-            _backend.Login(_loginInputField.text, _passwordInputField.text);
+            LoginClickedEvent?.Invoke(_loginInputField.text, _passwordInputField.text);
         }
 
         private void RegistrationButtonPressed()
         {
             RegistrationClickedEvent?.Invoke();
         }
-        
+
         private void GuestButtonPressed()
         {
-            Debug.Log($"Continue as a guest");
+            GuestClickedEvent?.Invoke();
         }
 
         private void ForgetPasswordButtonPressed()
         {
-            Debug.Log($"Your password was sent to your email. (no)");
+            ForgetPasswordClickedEvent?.Invoke();
         }
 
 #if UNITY_EDITOR
         public void LoginEditor(string login, string password)
         {
-            _backend.Login(login, password);
+            _loginInputField.text = login;
+            _passwordInputField.text = password;
+            LoginButtonPressed();
         }
-        
+
         public void RegistrationEditor()
         {
             RegistrationButtonPressed();
         }
-        
+
         public void ForgetPasswordEditor()
         {
             ForgetPasswordButtonPressed();
+        }
+        
+        public void GuestModeEditor()
+        {
+            GuestButtonPressed();
         }
 #endif
     }
