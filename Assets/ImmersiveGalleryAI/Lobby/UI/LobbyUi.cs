@@ -52,7 +52,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _registrationPanel.SetActive(false);
             _loginPanel.SetActive(true);
         }
-        
+
         private void ForgetPanelBackEventHandler()
         {
             _recoveryPanel.SetActive(false);
@@ -69,7 +69,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         {
             TryLoggedIn(login, password);
         }
-        
+
         private void GuestLoginEventHandler()
         {
             LoadMainScene();

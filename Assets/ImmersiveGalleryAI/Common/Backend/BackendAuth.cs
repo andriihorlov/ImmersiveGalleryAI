@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Firebase.Auth;
+using ImmersiveGalleryAI.Common.Utilities;
 
 namespace ImmersiveGalleryAI.Common.Backend
 {
@@ -17,9 +18,9 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         public async UniTask<bool> RecoverPassword(string recoverEmail)
         {
-             Task resetEmailTask = FirebaseAuth.SendPasswordResetEmailAsync(recoverEmail);
-             await resetEmailTask;
-             return resetEmailTask.IsCompletedSuccessfully;
+            Task resetEmailTask = FirebaseAuth.SendPasswordResetEmailAsync(recoverEmail);
+            await resetEmailTask;
+            return resetEmailTask.IsCompletedSuccessfully;
         }
 
         private async UniTask<bool> TryToRegistration(Task<AuthResult> registerTask)

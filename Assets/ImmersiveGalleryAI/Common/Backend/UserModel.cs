@@ -13,7 +13,14 @@ namespace ImmersiveGalleryAI.Common.Backend
     {
         public string login;
         public string email;
+        public ImageSetting[] imageSettings;
+    }
 
-        public string[] imagesPath;
+    [Serializable]
+    public class ImageSetting
+    {
+        public int wallId;
+        public string imagePath;
+        public string description;
     }
 }

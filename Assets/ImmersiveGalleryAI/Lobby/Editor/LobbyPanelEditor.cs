@@ -15,6 +15,9 @@ namespace ImmersiveGalleryAI.Lobby.Editor
             PasswordRecovery
         }
 
+        private const string DefaultUserName = "fidg";
+        private const string DefaultUserPassword = "fidgfidg";
+
         private LoginPanel _loginPanel;
         private LoginPanel LoginPanel => _loginPanel ??= FindObjectOfType<LoginPanel>();
 
@@ -26,8 +29,8 @@ namespace ImmersiveGalleryAI.Lobby.Editor
 
         private PanelType _currentPanelType = PanelType.Login;
 
-        private string _startLogin;
-        private string _startPassword;
+        private string _startLogin = DefaultUserName;
+        private string _startPassword = DefaultUserPassword;
 
         private string _registrationEmail;
         private string _registrationLogin;
