@@ -18,13 +18,13 @@ namespace ImmersiveGalleryAI.Main
         private bool _isMicEnabled;
 
         [Inject] private IVoiceHandler _voiceHandler;
-        [Inject] private IDataManager _dataManager;
+        [Inject] private IImageDataManager _imageDataManager;
         [Inject] private IKeyboard _keyboard;
         [Inject] private IPlayerLocation _playerLocation;
 
         private void Awake()
         {
-            _dataManager.LoadSettings();
+            _imageDataManager.LoadSettings();
         }
 
         private void OnEnable()
@@ -58,17 +58,17 @@ namespace ImmersiveGalleryAI.Main
 
         private void OnApplicationQuit()
         {
-            _dataManager.SaveSettings();
+            _imageDataManager.SaveSettings();
         }
 
         private void LoadPreviousImages()
         {
-            if (_dataManager.Settings?.ImagesData == null)
+            if (_imageDataManager.Settings?.ImagesData == null)
             {
                 return;
             }
 
-            foreach (ImageData imageData in _dataManager.Settings.ImagesData)
+            foreach (ImageData imageData in _imageDataManager.Settings.ImagesData)
             {
                 WallImage targetWall = _images.FirstOrDefault(t => t.WallId.Equals(imageData.WallId));
                 if (targetWall != null)

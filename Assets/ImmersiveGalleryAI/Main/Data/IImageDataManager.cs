@@ -1,6 +1,6 @@
 ﻿namespace ImmersiveGalleryAI.Main.Data
 {
-    public interface IDataManager
+    public interface IImageDataManager
     {
         SettingsData Settings { get; }
         void SaveSettings();

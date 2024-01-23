@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ImmersiveGalleryAI.Main.Data
 {
-    public class DataManager : IDataManager
+    public class ImageImageDataManager : IImageDataManager
     {
         public SettingsData Settings { get; private set; }
 
@@ -31,7 +31,7 @@ namespace ImmersiveGalleryAI.Main.Data
             Debug.Log($"Shared! {imageData.FileName}");
             // NativeGallery.CheckPermission(NativeGallery.PermissionType.Write, NativeGallery.MediaType.Image);
             // NativeGallery.SaveImageToGallery(imageData.FileContent, "Album", imageData.FileName);
-            SendEmail.Send(imageData);
+            //SendEmail.Send(imageData);
         }
 
         public void LoadSettings()
