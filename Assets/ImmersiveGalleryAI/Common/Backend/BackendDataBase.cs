@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Firebase.Database;
 using Firebase.Extensions;
+using ImmersiveGalleryAI.Common.Settings;
 using UnityEngine;
 using Logger = ImmersiveGalleryAI.Common.Utilities.Logger;
 
@@ -19,12 +20,9 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         public async UniTask AddToDatabase(string login, string email)
         {
-            UserModel userModel = new UserModel {login = login, email = email, imagesPath = new string[0]};
+            UserModel userModel = new UserModel {login = login, email = email, imageSettings = new ImageSetting[ApplicationSettings.WallImages]};
             DatabaseReference databaseReference = FirebaseGetDataBaseReference.Push();
-            await databaseReference.SetRawJsonValueAsync(JsonUtility.ToJson(userModel)).ContinueWithOnMainThread(task =>
-            {
-                Logger.WriteTask(task, "Add data to DB");
-            });
+            await databaseReference.SetRawJsonValueAsync(JsonUtility.ToJson(userModel)).ContinueWithOnMainThread(task => { Logger.WriteTask(task, "Add data to DB"); });
         }
 
         public async UniTask<bool> IsLoginExist(string login)

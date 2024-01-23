@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
+using ImmersiveGalleryAI.Main.Data;
 using UnityEngine;
 using Logger = ImmersiveGalleryAI.Common.Utilities.Logger;
 
@@ -9,11 +10,13 @@ namespace ImmersiveGalleryAI.Common.Backend
     {
         private readonly BackendAuth _backendAuth;
         private readonly BackendDataBase _backendDataBase;
+        private readonly BackendStorage _backendStorage;
 
         public BackendManager()
         {
             _backendAuth = new BackendAuth();
             _backendDataBase = new BackendDataBase();
+            _backendStorage = new BackendStorage();
         }
 
         public async Task<bool> Registration(string login, string email, string password)
@@ -37,12 +40,28 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         public async UniTask<bool> Login(string login, string password)
         {
-            return await TryLogin(login, password);
+            bool isLogged = await TryLogin(login, password);
+            if (isLogged)
+            {
+                _backendStorage.Init(login);
+            }
+
+            return isLogged;
         }
 
         public async UniTask<bool> RecoverPassword(string recoverEmail)
         {
             return await _backendAuth.RecoverPassword(recoverEmail);
+        }
+
+        public async UniTask<bool> UploadImageData(ImageData imageData)
+        {
+            return await _backendStorage.UploadImage(imageData.WallId, imageData.FileContent);
+        }
+
+        public async UniTask<byte[]> DownloadImage(string userName, int wallId)
+        {
+            return await _backendStorage.DownloadImage(userName, wallId);
         }
 
         private async UniTask<bool> IsLoginExist(string login)
