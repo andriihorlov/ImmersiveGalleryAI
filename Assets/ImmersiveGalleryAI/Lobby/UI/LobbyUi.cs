@@ -28,6 +28,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.LoginClickedEvent += LoginEventHandler;
             _loginPanel.GuestClickedEvent += GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent += BackToLoginPanel;
+            _registrationPanel.GuestButtonEvent += GuestLoginEventHandler;
             _recoveryPanel.BackToLoginEvent += ForgetPanelBackEventHandler;
         }
 
@@ -38,6 +39,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.LoginClickedEvent -= LoginEventHandler;
             _loginPanel.GuestClickedEvent -= GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent -= BackToLoginPanel;
+            _registrationPanel.GuestButtonEvent -= GuestLoginEventHandler;
             _recoveryPanel.BackToLoginEvent -= ForgetPanelBackEventHandler;
         }
 

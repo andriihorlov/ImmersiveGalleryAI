@@ -11,6 +11,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
     public class RegistrationPanel : UiPanel
     {
         public event Action BackToLoginEvent;
+        public event Action GuestButtonEvent;
 
         [SerializeField] private TMP_InputField _emailInputField;
         [SerializeField] private TMP_InputField _loginInputField;
@@ -19,6 +20,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         [SerializeField] private Button _registrationButton;
         [SerializeField] private Button _backButton;
+        [SerializeField] private Button _guestButton;
 
         private bool _isPasswordOk;
 
@@ -28,6 +30,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         {
             _registrationButton.onClick.AddListener(RegistrationButtonClicked);
             _backButton.onClick.AddListener(BackButtonClicked);
+            _guestButton.onClick.AddListener(GuestButtonClicked);
 
             _repeatPasswordInputField.onDeselect.AddListener(RepeatPasswordDeselect);
         }
@@ -36,6 +39,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         {
             _registrationButton.onClick.RemoveListener(RegistrationButtonClicked);
             _backButton.onClick.RemoveListener(BackButtonClicked);
+            _guestButton.onClick.RemoveListener(GuestButtonClicked);
 
             _repeatPasswordInputField.onDeselect.RemoveListener(RepeatPasswordDeselect);
         }
@@ -70,6 +74,11 @@ namespace ImmersiveGalleryAI.Lobby.UI
             }
 
             RegistrationHandler();
+        }
+
+        private void GuestButtonClicked()
+        {
+            GuestButtonEvent?.Invoke();
         }
 
         private async void RegistrationHandler()
@@ -107,6 +116,11 @@ namespace ImmersiveGalleryAI.Lobby.UI
         public void BackEditor()
         {
             BackButtonClicked();
+        }
+
+        public void GuestEditor()
+        {
+            GuestButtonClicked();
         }
 
         [ContextMenu("Fill random values")]

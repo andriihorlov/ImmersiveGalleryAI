@@ -138,6 +138,11 @@ namespace ImmersiveGalleryAI.Lobby.Editor
                 RegistrationPanel.RegistrationEditor();
             }
 
+            if (GUILayout.Button("Guest"))
+            {
+                RegistrationPanel.GuestEditor();
+            }
+            
             if (GUILayout.Button("Back"))
             {
                 RegistrationPanel.BackEditor();
