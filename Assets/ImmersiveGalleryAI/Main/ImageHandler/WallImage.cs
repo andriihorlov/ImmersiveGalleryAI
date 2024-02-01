@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.Loader;
 using ImmersiveGalleryAI.Common.Web;
+using ImmersiveGalleryAI.Main.Credits;
 using ImmersiveGalleryAI.Main.Data;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,9 +16,9 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         public event Action<WallImage> OpenedPanel;
 
         [SerializeField] private int _wallId;
-        // [SerializeField] private Image _resultedImage;
         [SerializeField] private LoaderHandler _loadingLabel;
         [SerializeField] private ControlPanel _controlPanel;
+        [SerializeField] private LowerPanel _lowerPanel;
         [SerializeField] private Button _openPanelButton;
         [SerializeField] private MeshRenderer _pictureMesh;
 
@@ -29,26 +30,38 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         [Inject] private IWebManager _webManager;
         [Inject] private IImageDataManager _imageDataManager;
         [Inject] private IBackend _backend;
+        [Inject] private ICredits _credits;
 
         public int WallId => _wallId;
         public ControlPanel ControlPanel => _controlPanel;
-        private Material CurrentMaterial => _currentMaterial ??= _pictureMesh.materials[2];
+        private Material CurrentMaterial => _currentMaterial ??= _pictureMesh.material;
 
         private void OnEnable()
         {
             _controlPanel.GenerateImageClicked += GenerateImageEventHandler;
+            // _controlPanel.ShareClicked += ShareClickedEventHandler;
+            // _controlPanel.DeleteClicked += DeleteClickedEventHandler;
+            //_openPanelButton.onClick.AddListener(OpenPanelEventHandler);
 
-            _controlPanel.ShareClicked += ShareClickedEventHandler;
-            _controlPanel.DeleteClicked += DeleteClickedEventHandler;
-            _openPanelButton.onClick.AddListener(OpenPanelEventHandler);
+            _lowerPanel.EditButtonEvent += OpenPanelEventHandler;
+            _lowerPanel.SaveButtonEvent += SaveButtonEventHandler;
+            _lowerPanel.DeleteButtonEvent += DeleteClickedEventHandler;
+
+            _credits.UpgradeBalanceEvent += UpgradeBalanceEventHandler;
         }
 
         private void OnDisable()
         {
             _controlPanel.GenerateImageClicked -= GenerateImageEventHandler;
-            _controlPanel.ShareClicked -= ShareClickedEventHandler;
-            _controlPanel.DeleteClicked -= DeleteClickedEventHandler;
-            _openPanelButton.onClick.RemoveListener(OpenPanelEventHandler);
+            // _controlPanel.ShareClicked -= ShareClickedEventHandler;
+            // _controlPanel.DeleteClicked -= DeleteClickedEventHandler;
+            // _openPanelButton.onClick.RemoveListener(OpenPanelEventHandler);
+            
+            _lowerPanel.EditButtonEvent -= OpenPanelEventHandler;
+            _lowerPanel.SaveButtonEvent -= SaveButtonEventHandler;
+            _lowerPanel.DeleteButtonEvent -= DeleteClickedEventHandler;
+            
+            _credits.UpgradeBalanceEvent -= UpgradeBalanceEventHandler;
         }
 
         public void LoadPreviousImage(ImageData imageData)
@@ -57,7 +70,6 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             Texture2D texture = new Texture2D(1, 1);
             texture.LoadImage(imageData.FileContent);
             texture.Apply();
-            //_resultedImage.sprite = CreateSprite(texture);
             CurrentMaterial.mainTexture = texture;
         }
 
@@ -65,6 +77,11 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         {
             ControlPanelSetActive(false);
             _isPanelOpened = false;
+        }
+        
+        private void SaveButtonEventHandler()
+        {
+            // save image
         }
 
         private void ControlPanelSetActive(bool isActive)
@@ -75,13 +92,13 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private async void GenerateImageEventHandler()
         {
             CurrentMaterial.mainTexture = null;
-            //_resultedImage.sprite = null;
             _loadingLabel.SetActive(true);
             _controlPanel.ToggleButtons(false);
             Task<Texture2D> resultedTexture = _webManager.GenerateImageEventHandler(_controlPanel.InputField.text);
+            _credits.SpendCredit();
+            
             await resultedTexture;
             _currentTexture = resultedTexture.Result;
-            //_resultedImage.sprite = CreateSprite(_currentTexture);
             CurrentMaterial.mainTexture = _currentTexture;
             _controlPanel.ToggleButtons(true);
             _loadingLabel.SetActive(false);
@@ -96,11 +113,6 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _imageDataManager.SaveImage(_currentImage);
         }
 
-        private Sprite CreateSprite(Texture2D texture2D)
-        {
-            return Sprite.Create(texture2D, new Rect(0, 0, 256, 256), Vector2.zero);
-        }
-
         [ContextMenu("Save image")]
         private void ShareClickedEventHandler()
         {
@@ -111,6 +123,11 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private async void UploadImage()
         {
             await _backend.UploadImageData(_currentImage);
+        }
+        
+        private void UpgradeBalanceEventHandler()
+        {
+            // sent email to admin with request possibility
         }
 
         [ContextMenu("Delete currentImage")]
