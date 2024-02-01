@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using ImmersiveGalleryAI.Main.Data;
+using ImmersiveGalleryAI.Main.ImageData;
 
 namespace ImmersiveGalleryAI.Common.Backend
 {

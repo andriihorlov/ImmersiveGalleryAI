@@ -1,4 +1,4 @@
-﻿namespace ImmersiveGalleryAI.Main.Data
+﻿namespace ImmersiveGalleryAI.Main.ImageData
 {
     public interface IImageDataManager
     {

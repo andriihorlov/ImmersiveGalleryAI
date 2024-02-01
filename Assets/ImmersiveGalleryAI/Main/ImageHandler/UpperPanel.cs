@@ -1,4 +1,3 @@
-using System;
 using ImmersiveGalleryAI.Main.Credits;
 using TMPro;
 using UnityEngine;

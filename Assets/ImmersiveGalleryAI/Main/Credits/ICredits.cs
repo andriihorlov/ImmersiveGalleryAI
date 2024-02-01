@@ -6,6 +6,7 @@ namespace ImmersiveGalleryAI.Main.Credits
     {
         event Action<int> UpdateBalanceEvent;
         event Action UpgradeBalanceEvent;
+        event Action NoCreditsLeftEvent;
         
         int GetCreditsBalance();
         void SetCreditsBalance(int credits);
