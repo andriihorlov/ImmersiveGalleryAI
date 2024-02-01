@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace ImmersiveGalleryAI.Main.UI
@@ -12,8 +13,9 @@ namespace ImmersiveGalleryAI.Main.UI
         InappropriateText
     }
 
+    [CreateAssetMenu(fileName = "Additional Data", menuName = "AdditionalInfo/Data")]
     [Serializable]
-    public class AdditionalInfoData
+    public class AdditionalInfoData : ScriptableObject
     {
         public AdditionalInfoType InfoType;
         public Sprite InfoSprite;

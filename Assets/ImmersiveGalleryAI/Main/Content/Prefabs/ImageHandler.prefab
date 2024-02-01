@@ -647,7 +647,11 @@ MonoBehaviour:
   _additionalDataIcon: {fileID: 499181654820189312}
   _additionalText: {fileID: 1972402456835372356}
   _additionalData: {fileID: 1677497424558603901}
-  _additionalDataList: []
+  _additionalDataList:
+  - {fileID: 11400000, guid: 797c04a451fb6184fb0e3e0a35bbae4f, type: 2}
+  - {fileID: 11400000, guid: 6639297c621411247af26d5914e67e95, type: 2}
+  - {fileID: 11400000, guid: fe2c4cf86d0f38446b3aa1620b414aa7, type: 2}
+  - {fileID: 11400000, guid: 5658664b96449604f940bcae0a1651e6, type: 2}
 --- !u!1 &1677497424558603901
 GameObject:
   m_ObjectHideFlags: 0
@@ -1507,8 +1511,9 @@ MonoBehaviour:
   _loadingLabel: {fileID: 7857237625950419199}
   _controlPanel: {fileID: 6343032811804707718}
   _lowerPanel: {fileID: 2537327918879018095}
-  _openPanelButton: {fileID: 1768535926392490582}
+  _upperPanel: {fileID: 628625512673403356}
   _pictureMesh: {fileID: 2223930928319845845}
+  _additionalInformation: {fileID: 2141499487646469274}
 --- !u!1 &3697659376398555745
 GameObject:
   m_ObjectHideFlags: 0
