@@ -1,12 +1,16 @@
 using System;
+using ImmersiveGalleryAI.Main.Credits;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace ImmersiveGalleryAI.Lobby.UI
 {
     public class LoginPanel : UiPanel
     {
+        private const int DefaultGuestCreditBalance = 5;
+        
         public event Action RegistrationClickedEvent;
         public event Action ForgetPasswordClickedEvent;
         public event Action GuestClickedEvent;
@@ -19,6 +23,8 @@ namespace ImmersiveGalleryAI.Lobby.UI
         [SerializeField] private Button _registrationButton;
         [SerializeField] private Button _forgetPasswordButton;
         [SerializeField] private Button _guestButton;
+
+        [Inject] private ICredits _credits;
 
         private void OnEnable()
         {
@@ -38,6 +44,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         private void LoginButtonPressed()
         {
+            _credits.SetCreditsBalance(DefaultGuestCreditBalance); // todo: change to the actual user balance
             LoginClickedEvent?.Invoke(_loginInputField.text, _passwordInputField.text);
         }
 
@@ -48,6 +55,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         private void GuestButtonPressed()
         {
+            _credits.SetCreditsBalance(DefaultGuestCreditBalance);
             GuestClickedEvent?.Invoke();
         }
 
