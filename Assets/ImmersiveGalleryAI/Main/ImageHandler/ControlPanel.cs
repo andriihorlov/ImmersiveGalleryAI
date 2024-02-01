@@ -11,8 +11,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         public event Action GenerateImageClicked;
         public event Action InputFieldSelected;
         public event Action VoiceClicked;
-        public event Action ShareClicked;
-        public event Action DeleteClicked;
+        // public event Action ShareClicked;
+        // public event Action DeleteClicked;
 
         private const string EnableMic = "Voice";
         private const string DisableMic = "Stop";
@@ -27,8 +27,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         [SerializeField] private TMP_InputField _inputField;
         [SerializeField] private Button _requestImageButton;
         [SerializeField] private Button _voiceButton;
-        [Space] [SerializeField] private Button _shareImageButton;
-        [SerializeField] private Button _deleteImageButton;
+        // [Space] [SerializeField] private Button _shareImageButton;
+        // [SerializeField] private Button _deleteImageButton;
         [Space] [SerializeField] private TextMeshProUGUI _voiceButtonText;
 
         private Transform _currentTransform;
@@ -47,8 +47,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _inputField.onSelect.AddListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.AddListener(VoiceClickedEventHandler);
 
-            _shareImageButton.onClick.AddListener(ShareClickedEventHandler);
-            _deleteImageButton.onClick.AddListener(DeleteClickedEventHandler);
+            // _shareImageButton.onClick.AddListener(ShareClickedEventHandler);
+            // _deleteImageButton.onClick.AddListener(DeleteClickedEventHandler);
         }
 
         private void OnDisable()
@@ -57,8 +57,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _inputField.onSelect.RemoveListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.RemoveListener(VoiceClickedEventHandler);
 
-            _shareImageButton.onClick.RemoveListener(ShareClickedEventHandler);
-            _deleteImageButton.onClick.RemoveListener(DeleteClickedEventHandler);
+            // _shareImageButton.onClick.RemoveListener(ShareClickedEventHandler);
+            // _deleteImageButton.onClick.RemoveListener(DeleteClickedEventHandler);
         }
 
         public void ToggleButtons(bool isActive)
@@ -121,14 +121,14 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _voiceButtonText.text = _isMicEnabled ? DisableMic : EnableMic;
         }
 
-        private void ShareClickedEventHandler()
-        {
-            ShareClicked?.Invoke();
-        }
-
-        private void DeleteClickedEventHandler()
-        {
-            DeleteClicked?.Invoke();
-        }
+        // private void ShareClickedEventHandler()
+        // {
+        //     ShareClicked?.Invoke();
+        // }
+        //
+        // private void DeleteClickedEventHandler()
+        // {
+        //     DeleteClicked?.Invoke();
+        // }
     }
 }
