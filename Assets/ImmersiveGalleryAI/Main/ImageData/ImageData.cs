@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ImmersiveGalleryAI.Main.Data
+namespace ImmersiveGalleryAI.Main.ImageData
 {
     [Serializable]
     public class SettingsData

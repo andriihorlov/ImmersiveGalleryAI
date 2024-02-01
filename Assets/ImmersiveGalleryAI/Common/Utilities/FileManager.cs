@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using ImmersiveGalleryAI.Main.Data;
+using ImmersiveGalleryAI.Main.ImageData;
 using UnityEngine;
 
 namespace ImmersiveGalleryAI.Common.Utilities

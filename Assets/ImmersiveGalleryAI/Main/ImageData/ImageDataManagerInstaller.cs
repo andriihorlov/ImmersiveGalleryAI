@@ -1,6 +1,6 @@
 ﻿using Zenject;
 
-namespace ImmersiveGalleryAI.Main.Data
+namespace ImmersiveGalleryAI.Main.ImageData
 {
     public class ImageDataManagerInstaller : MonoInstaller
     {

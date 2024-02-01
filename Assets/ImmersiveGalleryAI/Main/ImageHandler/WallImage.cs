@@ -4,9 +4,9 @@ using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.Loader;
 using ImmersiveGalleryAI.Common.Web;
 using ImmersiveGalleryAI.Main.Credits;
-using ImmersiveGalleryAI.Main.Data;
+using ImmersiveGalleryAI.Main.ImageData;
+using ImmersiveGalleryAI.Main.UI;
 using UnityEngine;
-using UnityEngine.UI;
 using Zenject;
 
 namespace ImmersiveGalleryAI.Main.ImageHandler
@@ -19,11 +19,12 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         [SerializeField] private LoaderHandler _loadingLabel;
         [SerializeField] private ControlPanel _controlPanel;
         [SerializeField] private LowerPanel _lowerPanel;
-        [SerializeField] private Button _openPanelButton;
+        [SerializeField] private UpperPanel _upperPanel;
         [SerializeField] private MeshRenderer _pictureMesh;
+        [SerializeField] private AdditionalInformation _additionalInformation;
 
         private Material _currentMaterial;
-        private ImageData _currentImage;
+        private ImageData.ImageData _currentImage;
         private Texture2D _currentTexture;
         private bool _isPanelOpened;
 
@@ -36,41 +37,42 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         public ControlPanel ControlPanel => _controlPanel;
         private Material CurrentMaterial => _currentMaterial ??= _pictureMesh.material;
 
+        private void Awake()
+        {
+            _additionalInformation.SetActive(true, AdditionalInfoType.Default);
+        }
+
         private void OnEnable()
         {
             _controlPanel.GenerateImageClicked += GenerateImageEventHandler;
-            // _controlPanel.ShareClicked += ShareClickedEventHandler;
-            // _controlPanel.DeleteClicked += DeleteClickedEventHandler;
-            //_openPanelButton.onClick.AddListener(OpenPanelEventHandler);
-
             _lowerPanel.EditButtonEvent += OpenPanelEventHandler;
             _lowerPanel.SaveButtonEvent += SaveButtonEventHandler;
             _lowerPanel.DeleteButtonEvent += DeleteClickedEventHandler;
-
+            
             _credits.UpgradeBalanceEvent += UpgradeBalanceEventHandler;
+            _credits.NoCreditsLeftEvent += NoCreditsLeftEventHandler;
         }
 
         private void OnDisable()
         {
             _controlPanel.GenerateImageClicked -= GenerateImageEventHandler;
-            // _controlPanel.ShareClicked -= ShareClickedEventHandler;
-            // _controlPanel.DeleteClicked -= DeleteClickedEventHandler;
-            // _openPanelButton.onClick.RemoveListener(OpenPanelEventHandler);
-            
             _lowerPanel.EditButtonEvent -= OpenPanelEventHandler;
             _lowerPanel.SaveButtonEvent -= SaveButtonEventHandler;
             _lowerPanel.DeleteButtonEvent -= DeleteClickedEventHandler;
             
             _credits.UpgradeBalanceEvent -= UpgradeBalanceEventHandler;
+            _credits.NoCreditsLeftEvent -= NoCreditsLeftEventHandler;
         }
 
-        public void LoadPreviousImage(ImageData imageData)
+        public void LoadPreviousImage(ImageData.ImageData imageData)
         {
             _currentImage = imageData;
             Texture2D texture = new Texture2D(1, 1);
             texture.LoadImage(imageData.FileContent);
             texture.Apply();
             CurrentMaterial.mainTexture = texture;
+            
+            _additionalInformation.SetActive(false);
         }
 
         public void HideControlPanel()
@@ -109,7 +111,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             }
 
             byte[] bytes = _currentTexture.EncodeToJPG();
-            _currentImage = new ImageData {FileContent = bytes, WallId = _wallId, Description = _controlPanel.InputField.text};
+            _currentImage = new ImageData.ImageData {FileContent = bytes, WallId = _wallId, Description = _controlPanel.InputField.text};
             _imageDataManager.SaveImage(_currentImage);
         }
 
@@ -128,6 +130,14 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private void UpgradeBalanceEventHandler()
         {
             // sent email to admin with request possibility
+        }
+        
+        private void NoCreditsLeftEventHandler()
+        {
+            if (_currentImage == null)
+            {
+                _additionalInformation.SetActive(true, AdditionalInfoType.NoCredits);
+            }
         }
 
         [ContextMenu("Delete currentImage")]

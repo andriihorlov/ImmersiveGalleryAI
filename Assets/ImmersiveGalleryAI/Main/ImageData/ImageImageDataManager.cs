@@ -2,7 +2,7 @@
 using ImmersiveGalleryAI.Common.Utilities;
 using UnityEngine;
 
-namespace ImmersiveGalleryAI.Main.Data
+namespace ImmersiveGalleryAI.Main.ImageData
 {
     public class ImageImageDataManager : IImageDataManager
     {
@@ -13,19 +13,19 @@ namespace ImmersiveGalleryAI.Main.Data
             FileManager.SaveSettings(Settings);
         }
 
-        public void DeleteImage(ImageData imageData)
+        public void DeleteImage(Main.ImageData.ImageData imageData)
         {
             Settings.ImagesData.Remove(imageData);
             FileManager.DeleteImage(imageData.FilePath);
         }
 
-        public void SaveImage(ImageData imageData)
+        public void SaveImage(Main.ImageData.ImageData imageData)
         {
-            ImageData newImageData = FileManager.SaveImage(imageData.WallId, imageData.FileContent);
+            Main.ImageData.ImageData newImageData = FileManager.SaveImage(imageData.WallId, imageData.FileContent);
             AddImageInSettings(newImageData);
         }
 
-        public void ShareImage(ImageData imageData)
+        public void ShareImage(Main.ImageData.ImageData imageData)
         {
             //todo: will be implemented in future
             Debug.Log($"Shared! {imageData.FileName}");
@@ -39,10 +39,10 @@ namespace ImmersiveGalleryAI.Main.Data
             Settings = FileManager.LoadSettings();
         }
 
-        private void AddImageInSettings(ImageData imageData)
+        private void AddImageInSettings(Main.ImageData.ImageData imageData)
         {
             Settings ??= new SettingsData();
-            Settings.ImagesData ??= new List<ImageData>();
+            Settings.ImagesData ??= new List<Main.ImageData.ImageData>();
             Settings.ImagesData.Add(imageData);
         }
     }

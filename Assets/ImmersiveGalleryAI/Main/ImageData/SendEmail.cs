@@ -4,7 +4,7 @@ using System.Net.Mail;
 using System.Net.Mime;
 using UnityEngine;
 
-namespace ImmersiveGalleryAI.Main.Data
+namespace ImmersiveGalleryAI.Main.ImageData
 {
     public static class SendEmail
     {
@@ -17,7 +17,7 @@ namespace ImmersiveGalleryAI.Main.Data
             public string FilePath;
         }
 
-        public static void Send(ImageData imageData)
+        public static void Send(Main.ImageData.ImageData imageData)
         {
             MailMessage mail = new MailMessage
             {

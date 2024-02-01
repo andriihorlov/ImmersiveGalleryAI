@@ -6,6 +6,7 @@ namespace ImmersiveGalleryAI.Main.Credits
     {
         public event Action<int> UpdateBalanceEvent;
         public event Action UpgradeBalanceEvent;
+        public event Action NoCreditsLeftEvent;
 
         private int _creditsBalance;
         
@@ -20,6 +21,11 @@ namespace ImmersiveGalleryAI.Main.Credits
         {
             _creditsBalance--;
             UpdateBalanceEvent?.Invoke(_creditsBalance);
+
+            if (_creditsBalance == 0)
+            {
+                NoCreditsLeftEvent?.Invoke();
+            }
         }
 
         public void UpgradeBalance()

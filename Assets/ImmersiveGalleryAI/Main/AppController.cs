@@ -3,7 +3,7 @@ using System.Linq;
 using ImmersiveGalleryAI.Common.Keyboard;
 using ImmersiveGalleryAI.Common.PlayerLocation;
 using ImmersiveGalleryAI.Common.VoiceRecognition;
-using ImmersiveGalleryAI.Main.Data;
+using ImmersiveGalleryAI.Main.ImageData;
 using ImmersiveGalleryAI.Main.ImageHandler;
 using UnityEngine;
 using Zenject;
@@ -68,7 +68,7 @@ namespace ImmersiveGalleryAI.Main
                 return;
             }
 
-            foreach (ImageData imageData in _imageDataManager.Settings.ImagesData)
+            foreach (ImageData.ImageData imageData in _imageDataManager.Settings.ImagesData)
             {
                 WallImage targetWall = _images.FirstOrDefault(t => t.WallId.Equals(imageData.WallId));
                 if (targetWall != null)
