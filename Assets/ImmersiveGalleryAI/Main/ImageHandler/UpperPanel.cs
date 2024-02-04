@@ -15,6 +15,14 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
 
         private void Start()
         {
+            Debug.Log($"Balance: {_credits.GetCreditsBalance()}");
+
+            if (_credits.IsOwnCredits)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+            
             UpdateBalance(_credits.GetCreditsBalance());
         }
 

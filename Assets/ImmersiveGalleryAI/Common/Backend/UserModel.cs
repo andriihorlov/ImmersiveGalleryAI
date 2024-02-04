@@ -13,6 +13,7 @@ namespace ImmersiveGalleryAI.Common.Backend
     {
         public string login;
         public string email;
+        public int imagesLeft;
         public ImageSetting[] imageSettings;
     }
 

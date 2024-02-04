@@ -6,26 +6,26 @@ namespace ImmersiveGalleryAI.Main.ImageData
 {
     public class ImageImageDataManager : IImageDataManager
     {
-        public SettingsData Settings { get; private set; }
+        public AllImages Settings { get; private set; }
 
         public void SaveSettings()
         {
-            FileManager.SaveSettings(Settings);
+            FileManager.SaveImages(Settings);
         }
 
-        public void DeleteImage(Main.ImageData.ImageData imageData)
+        public void DeleteImage(ImageData imageData)
         {
             Settings.ImagesData.Remove(imageData);
             FileManager.DeleteImage(imageData.FilePath);
         }
 
-        public void SaveImage(Main.ImageData.ImageData imageData)
+        public void SaveImage(ImageData imageData)
         {
-            Main.ImageData.ImageData newImageData = FileManager.SaveImage(imageData.WallId, imageData.FileContent);
+            ImageData newImageData = FileManager.SaveImage(imageData.WallId, imageData.FileContent);
             AddImageInSettings(newImageData);
         }
 
-        public void ShareImage(Main.ImageData.ImageData imageData)
+        public void ShareImage(ImageData imageData)
         {
             //todo: will be implemented in future
             Debug.Log($"Shared! {imageData.FileName}");
@@ -36,13 +36,13 @@ namespace ImmersiveGalleryAI.Main.ImageData
 
         public void LoadSettings()
         {
-            Settings = FileManager.LoadSettings();
+            Settings = FileManager.LoadAllImages();
         }
 
-        private void AddImageInSettings(Main.ImageData.ImageData imageData)
+        private void AddImageInSettings(ImageData imageData)
         {
-            Settings ??= new SettingsData();
-            Settings.ImagesData ??= new List<Main.ImageData.ImageData>();
+            Settings ??= new AllImages();
+            Settings.ImagesData ??= new List<ImageData>();
             Settings.ImagesData.Add(imageData);
         }
     }

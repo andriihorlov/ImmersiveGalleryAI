@@ -2,7 +2,7 @@
 {
     public interface IImageDataManager
     {
-        SettingsData Settings { get; }
+        AllImages Settings { get; }
         void SaveSettings();
         void LoadSettings();
         void DeleteImage(ImageData imageData);

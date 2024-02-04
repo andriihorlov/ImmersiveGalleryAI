@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ImmersiveGalleryAI.Main.ImageData
 {
     [Serializable]
-    public class SettingsData
+    public class AllImages
     {
         public List<ImageData> ImagesData;
     }
