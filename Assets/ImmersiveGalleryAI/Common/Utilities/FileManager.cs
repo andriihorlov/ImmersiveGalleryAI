@@ -8,7 +8,8 @@ namespace ImmersiveGalleryAI.Common.Utilities
     public static class FileManager
     {
         private static readonly string DefaultFolder = Application.persistentDataPath;
-        private const string SettingsFileName = "/Settings";
+        private const string ImagesListFileName = "/Settings";
+        private const string OpenAiSettingsFileName = "/OpenAiAPI.json";
 
         private const string ImageFolder = "/AppData/";
         private const string ImageFormat = ".jpg";
@@ -24,10 +25,10 @@ namespace ImmersiveGalleryAI.Common.Utilities
             return imageData;
         }
 
-        public static SettingsData LoadSettings()
+        public static AllImages LoadAllImages()
         {
-            string settingsJson = Load(DefaultFolder + SettingsFileName);
-            return GetModelData<SettingsData>(settingsJson);
+            string settingsJson = Load(DefaultFolder + ImagesListFileName);
+            return GetModelData<AllImages>(settingsJson);
         }
 
         public static void DeleteImage(string filePath)
@@ -39,18 +40,47 @@ namespace ImmersiveGalleryAI.Common.Utilities
             }
         }
 
-        public static void SaveSettings(SettingsData settingsData)
+        public static void SaveImages(AllImages allImages)
         {
-            string filePath = DefaultFolder + SettingsFileName;
+            string filePath = DefaultFolder + ImagesListFileName;
             CreateFileDirectoryIfNeeded(filePath);
 
-            string jsonData = GetJsonData(settingsData);
+            string jsonData = GetJsonData(allImages);
             StreamWriter streamWriter = new StreamWriter(filePath);
             streamWriter.Write(jsonData);
             streamWriter.Close();
-            Debug.Log("<color=red>Settings changed!</color>");
+            Debug.Log("<color=red>All images saved!</color>");
         }
-        
+
+        public static string LoadLocalOpenAiApi()
+        {
+            string openAiFileName = DefaultFolder + OpenAiSettingsFileName;
+            if (!File.Exists(openAiFileName))
+            {
+                CreateOpenAiApiFile(openAiFileName);
+                return null;
+            }
+
+            string json = Load(openAiFileName);
+            CustomOpenAiApi api = GetModelData<CustomOpenAiApi>(json);
+            return api.privateApiKey;
+        }
+
+        private static void CreateOpenAiApiFile(string openAiFileName)
+        {
+            CreateFileDirectoryIfNeeded(openAiFileName);
+            if (!File.Exists(openAiFileName))
+            {
+                Debug.LogError($"Something wrong with creation OpenAI api file");
+                return;
+            }
+
+            CustomOpenAiApi authSettings = new CustomOpenAiApi {privateApiKey = string.Empty};
+            string json = GetJsonData(authSettings);
+            File.WriteAllText(openAiFileName, json);
+            Debug.Log($"Open AI template file created");
+        }
+
         private static void SaveImage(ImageData jsonData)
         {
             string filePath = FilePathFormat + jsonData.FileName + ImageFormat;
@@ -58,7 +88,7 @@ namespace ImmersiveGalleryAI.Common.Utilities
             CreateFileDirectoryIfNeeded(filePath);
             File.WriteAllBytes(filePath, jsonData.FileContent);
         }
-        
+
         private static string Load(string pathFile)
         {
             if (!File.Exists(pathFile))

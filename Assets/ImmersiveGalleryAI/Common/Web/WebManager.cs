@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using ImmersiveGalleryAI.Common.Settings;
 using OpenAI;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,7 +8,7 @@ namespace ImmersiveGalleryAI.Common.Web
     public class WebManager : IWebManager
     {
         private const int DelayForRandomImage = 2000;
-        private readonly OpenAIApi _openAi = new OpenAIApi(ApplicationSettings.OpenAiKey);
+        private OpenAIApi _openAi = new OpenAIApi();
         
         private Texture2D[] _randomSprites;
         private bool _isAi = false;
@@ -36,10 +35,11 @@ namespace ImmersiveGalleryAI.Common.Web
             return resultedSprite;
         }
 
-        public void Init(Texture2D[] randomSprites, bool isAi)
+        public void Init(Texture2D[] randomSprites, bool isAi, string api)
         {
             _randomSprites = randomSprites;
             _isAi = isAi;
+            _openAi = new OpenAIApi(api);
         }
 
         private Texture2D GetNextImage() => _randomSprites[_randomIndex];

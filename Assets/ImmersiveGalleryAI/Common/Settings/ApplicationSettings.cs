@@ -1,8 +1,44 @@
+using Cysharp.Threading.Tasks;
+using ImmersiveGalleryAI.Common.Backend;
+using ImmersiveGalleryAI.Common.Utilities;
+using ImmersiveGalleryAI.Main.Credits;
+using UnityEngine;
+using Zenject;
+
 namespace ImmersiveGalleryAI.Common.Settings
 {
-    public static class ApplicationSettings
+    public class ApplicationSettings : MonoBehaviour
     {
-        public const int WallImages = 11;
-        public const string OpenAiKey = "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";
+        [Tooltip("Count of image places")]
+        [SerializeField]
+        public int _wallImages = 11;
+
+        [Inject] private IBackend _backend;
+        [Inject] private ISettings _settings;
+        [Inject] private ICredits _credits;
+
+        private void Start()
+        {
+            InitSettings();
+        }
+
+        private async void InitSettings()
+        {
+            UniTask<SettingsData> settings = _backend.GetApplicationSettings();
+            SettingsData settingsData = await settings;
+            _settings.SetSettings(settingsData);
+            
+            string localOpenAiApi = FileManager.LoadLocalOpenAiApi();
+            if (string.IsNullOrEmpty(localOpenAiApi))
+            {
+                Debug.Log($"Local settings not exist");
+                _backend.SetWallImagesCount(_wallImages, _settings.GetDefaultImageCount());
+                _credits.SetCreditType(isOwn: false);
+                return;
+            }
+
+            _settings.UseOwnApi(localOpenAiApi);
+            _credits.SetCreditType(isOwn: true);
+        }
     }
 }

@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using ImmersiveGalleryAI.Main.ImageData;
 using UnityEngine;
 using Logger = ImmersiveGalleryAI.Common.Utilities.Logger;
+using SettingsData = ImmersiveGalleryAI.Common.Settings.SettingsData;
 
 namespace ImmersiveGalleryAI.Common.Backend
 {
@@ -11,12 +12,20 @@ namespace ImmersiveGalleryAI.Common.Backend
         private readonly BackendAuth _backendAuth;
         private readonly BackendDataBase _backendDataBase;
         private readonly BackendStorage _backendStorage;
+        
+        private int _defaultImageLeft;
 
         public BackendManager()
         {
             _backendAuth = new BackendAuth();
             _backendDataBase = new BackendDataBase();
             _backendStorage = new BackendStorage();
+        }
+
+        public void SetWallImagesCount(int imageCount, int defaultImagesLeft)
+        {
+            _backendDataBase.SetWallImageCount(imageCount);
+            _defaultImageLeft = defaultImagesLeft;
         }
 
         public async Task<bool> Registration(string login, string email, string password)
@@ -32,7 +41,7 @@ namespace ImmersiveGalleryAI.Common.Backend
             bool isRegistrationSucceed = await _backendAuth.Registration(email, password);
             if (isRegistrationSucceed)
             {
-                await _backendDataBase.AddToDatabase(login, email);
+                await _backendDataBase.AddToDatabase(login, email, _defaultImageLeft);
             }
 
             return isRegistrationSucceed;
@@ -62,6 +71,26 @@ namespace ImmersiveGalleryAI.Common.Backend
         public async UniTask<byte[]> DownloadImage(string userName, int wallId)
         {
             return await _backendStorage.DownloadImage(userName, wallId);
+        }
+
+        public async UniTask<SettingsData> GetApplicationSettings()
+        {
+            return await _backendDataBase.GetApplicationSettings();
+        }
+
+        public async UniTask GuestEnter()
+        {
+            string deviceId = SystemInfo.deviceUniqueIdentifier;
+            bool isDeviceIdExist = await _backendDataBase.IsLoginExist(deviceId);
+
+            if (isDeviceIdExist)
+            {
+                return;
+            }
+
+            string tempEmail = deviceId.Substring(0, 5) + "@guest.com";
+            await _backendDataBase.AddToDatabase(deviceId, tempEmail, _defaultImageLeft);
+            Debug.Log($"Guest entered! {deviceId} : {tempEmail}");
         }
 
         private async UniTask<bool> IsLoginExist(string login)

@@ -1,5 +1,7 @@
 ﻿using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.SceneManagement;
+using ImmersiveGalleryAI.Common.Settings;
+using ImmersiveGalleryAI.Main.Credits;
 using UnityEngine;
 using Zenject;
 
@@ -13,6 +15,8 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         [Inject] private IBackend _backend;
         [Inject] private ISceneManager _sceneManager;
+        [Inject] private ISettings _settings;
+        [Inject] private ICredits _credits;
 
         private void Awake()
         {
@@ -74,6 +78,12 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         private void GuestLoginEventHandler()
         {
+            ContinueAsGuest();
+        }
+
+        private async void ContinueAsGuest()
+        {
+            await _backend.GuestEnter();
             LoadMainScene();
         }
 
@@ -89,6 +99,18 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private void LoadMainScene()
         {
             _sceneManager.LoadScene(SceneType.Main);
+        }
+
+        private void SetCredits()
+        {
+            int creditBalance = _settings.GetDefaultImageCount();
+            _credits.SetCreditsBalance(creditBalance);
+        }
+
+        [ContextMenu("Check database")]
+        private void CheckDatabase()
+        {
+            _backend.GetApplicationSettings();
         }
     }
 }

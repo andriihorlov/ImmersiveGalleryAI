@@ -1,3 +1,5 @@
+using System.Collections;
+using ImmersiveGalleryAI.Common.Settings;
 using UnityEngine;
 using Zenject;
 
@@ -9,10 +11,12 @@ namespace ImmersiveGalleryAI.Common.Web
         [SerializeField] private bool _isAi = false;
 
         [Inject] private IWebManager _webManager;
+        [Inject] private ISettings _settings;
 
-        private void Start()
+        private IEnumerator Start()
         {
-            _webManager.Init(_randomTextures, _isAi);
+            yield return new WaitForEndOfFrame();
+            _webManager.Init(_randomTextures, _isAi, _settings.GetCurrentApi());
         }
     }
 }
