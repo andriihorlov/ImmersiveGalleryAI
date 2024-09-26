@@ -32,7 +32,7 @@ namespace VRUiKits.Utils
         public Key[] KeyList => _keyList;
         public Transform KeyboardTransform => transform;
 
-        private void Awake()
+        private void Start()
         {
             if (_keyList?.Length < 1)
             {

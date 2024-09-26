@@ -18,5 +18,6 @@ namespace ImmersiveGalleryAI.Common.Backend
         UniTask<byte[]> DownloadImage(string userName, int wallId);
 
         UniTask<SettingsData> GetApplicationSettings();
+        UniTask<UserModel> GetUserModel(string userName);
     }
 }

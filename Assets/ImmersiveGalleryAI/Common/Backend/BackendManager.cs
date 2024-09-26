@@ -2,6 +2,7 @@
 using Cysharp.Threading.Tasks;
 using ImmersiveGalleryAI.Main.ImageData;
 using UnityEngine;
+using UnityEngine.Playables;
 using Logger = ImmersiveGalleryAI.Common.Utilities.Logger;
 using SettingsData = ImmersiveGalleryAI.Common.Settings.SettingsData;
 
@@ -76,6 +77,11 @@ namespace ImmersiveGalleryAI.Common.Backend
         public async UniTask<SettingsData> GetApplicationSettings()
         {
             return await _backendDataBase.GetApplicationSettings();
+        }
+
+        public async UniTask<UserModel> GetUserModel(string userName)
+        {
+            return await _backendDataBase.GetUserModel(userName);
         }
 
         public async UniTask GuestEnter()

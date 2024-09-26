@@ -690,6 +690,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bbddd26a1144ef3ae28bc5130197f43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &690403052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 690403054}
+  - component: {fileID: 690403053}
+  m_Layer: 0
+  m_Name: UserInstaller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &690403053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690403052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85239f4fe52caa46b02d3eefd2cbb93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &690403054
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 690403052}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1085784803}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &698255987
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,6 +1396,7 @@ MonoBehaviour:
   - {fileID: 325495251}
   - {fileID: 1257348699}
   - {fileID: 1369702411}
+  - {fileID: 690403053}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -1390,6 +1435,7 @@ Transform:
   - {fileID: 325495252}
   - {fileID: 1257348700}
   - {fileID: 1369702410}
+  - {fileID: 690403054}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1095206049
@@ -1811,7 +1857,7 @@ GameObject:
   - component: {fileID: 1339460794}
   - component: {fileID: 1339460793}
   m_Layer: 0
-  m_Name: UserInstaller
+  m_Name: PlayerLocationInstaller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

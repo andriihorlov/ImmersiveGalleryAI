@@ -1,6 +1,7 @@
 ﻿using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.SceneManagement;
 using ImmersiveGalleryAI.Common.Settings;
+using ImmersiveGalleryAI.Common.User;
 using ImmersiveGalleryAI.Main.Credits;
 using UnityEngine;
 using Zenject;
@@ -15,8 +16,9 @@ namespace ImmersiveGalleryAI.Lobby.UI
 
         [Inject] private IBackend _backend;
         [Inject] private ISceneManager _sceneManager;
-        [Inject] private ISettings _settings;
+        //[Inject] private ISettings _settings;
         [Inject] private ICredits _credits;
+        [Inject] private IUser _user;
 
         private void Awake()
         {
@@ -84,6 +86,11 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private async void ContinueAsGuest()
         {
             await _backend.GuestEnter();
+            UserModel userModel = await _backend.GetUserModel(SystemInfo.deviceUniqueIdentifier);
+            Debug.Log($"User: {userModel}; Login: {userModel?.login}");
+            _user.SetUserData(userModel);
+            
+            Debug.Log($"Login: {_user.GetCurrentUserLogin()}");
             LoadMainScene();
         }
 
@@ -92,6 +99,8 @@ namespace ImmersiveGalleryAI.Lobby.UI
             bool isLoggedSucceed = await _backend.Login(login, password);
             if (isLoggedSucceed)
             {
+                UserModel userModel = await _backend.GetUserModel(login);
+                _user.SetUserData(userModel);
                 LoadMainScene();
             }
         }
@@ -101,11 +110,11 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _sceneManager.LoadScene(SceneType.Main);
         }
 
-        private void SetCredits()
-        {
-            int creditBalance = _settings.GetDefaultImageCount();
-            _credits.SetCreditsBalance(creditBalance);
-        }
+        // private void SetCredits()
+        // {
+        //     int creditBalance = _settings.GetDefaultImageCount();
+        //     _credits.SetCreditsBalance(creditBalance);
+        // }
 
         [ContextMenu("Check database")]
         private void CheckDatabase()
