@@ -10,7 +10,8 @@ namespace ImmersiveGalleryAI.Lobby.UI
     public class ForgetPanel : UiPanel
     {
         public event Action BackToLoginEvent;
-        
+        public event Action<TMP_InputField> InputFieldSelectedEvent;
+
         [SerializeField] private Button _forgetButton;
         [SerializeField] private Button _closeButton;
         [SerializeField] private TMP_InputField _recoverEmail;
@@ -21,6 +22,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         {
             _forgetButton.onClick.AddListener(RecoverButtonClicked);
             _closeButton.onClick.AddListener(CloseButtonClicked);
+            _recoverEmail.onSelect.AddListener(RecoveryEmailClicked);
         }
 
         private void OnDisable()
@@ -37,6 +39,11 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private void CloseButtonClicked()
         {
             BackToLoginEvent?.Invoke();
+        }
+
+        private void RecoveryEmailClicked(string arg0)
+        {
+            InputFieldSelectedEvent?.Invoke(_recoverEmail);
         }
 
 #if UNITY_EDITOR

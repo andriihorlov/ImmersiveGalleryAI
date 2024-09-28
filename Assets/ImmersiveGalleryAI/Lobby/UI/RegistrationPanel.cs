@@ -12,6 +12,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
     {
         public event Action BackToLoginEvent;
         public event Action GuestButtonEvent;
+        public event Action<TMP_InputField> InputFieldSelectedEvent;
 
         [SerializeField] private TMP_InputField _emailInputField;
         [SerializeField] private TMP_InputField _loginInputField;
@@ -31,8 +32,12 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _registrationButton.onClick.AddListener(RegistrationButtonClicked);
             _backButton.onClick.AddListener(BackButtonClicked);
             _guestButton.onClick.AddListener(GuestButtonClicked);
-
             _repeatPasswordInputField.onDeselect.AddListener(RepeatPasswordDeselect);
+            
+            _emailInputField.onSelect.AddListener(EmailSelected);
+            _loginInputField.onSelect.AddListener(LoginSelected);
+            _passwordInputField.onSelect.AddListener(PasswordSelected);
+            _repeatPasswordInputField.onSelect.AddListener(PasswordRepeatSelected);
         }
 
         private void OnDisable()
@@ -40,8 +45,13 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _registrationButton.onClick.RemoveListener(RegistrationButtonClicked);
             _backButton.onClick.RemoveListener(BackButtonClicked);
             _guestButton.onClick.RemoveListener(GuestButtonClicked);
-
             _repeatPasswordInputField.onDeselect.RemoveListener(RepeatPasswordDeselect);
+            
+            
+            _emailInputField.onSelect.RemoveListener(EmailSelected);
+            _loginInputField.onSelect.RemoveListener(LoginSelected);
+            _passwordInputField.onSelect.RemoveListener(PasswordSelected);
+            _repeatPasswordInputField.onSelect.RemoveListener(PasswordRepeatSelected);
         }
 
         private void RepeatPasswordDeselect(string repeatedPassword)
@@ -96,6 +106,26 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private void BackButtonClicked()
         {
             BackToLoginEvent?.Invoke();
+        }
+
+        private void EmailSelected(string arg0)
+        {
+            InputFieldSelectedEvent?.Invoke(_emailInputField);
+        }
+        
+        private void LoginSelected(string arg0)
+        {
+            InputFieldSelectedEvent?.Invoke(_loginInputField);
+        }
+
+        private void PasswordSelected(string arg0)
+        {
+            InputFieldSelectedEvent?.Invoke(_passwordInputField);
+        }
+
+        private void PasswordRepeatSelected(string arg0)
+        {
+            InputFieldSelectedEvent?.Invoke(_repeatPasswordInputField);
         }
 
 #if UNITY_EDITOR

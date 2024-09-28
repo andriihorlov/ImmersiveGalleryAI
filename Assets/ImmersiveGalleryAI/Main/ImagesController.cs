@@ -10,7 +10,7 @@ using Zenject;
 
 namespace ImmersiveGalleryAI.Main
 {
-    public class AppController : MonoBehaviour
+    public class ImagesController : MonoBehaviour
     {
         [SerializeField] private List<WallImage> _images;
 
@@ -61,6 +61,14 @@ namespace ImmersiveGalleryAI.Main
             _imageDataManager.SaveSettings();
         }
 
+        public void SetActive(bool isActive)
+        {
+            foreach (WallImage wallImage in _images)
+            {
+                wallImage.SetActive(isActive);
+            }
+        }
+
         private void LoadPreviousImages()
         {
             if (_imageDataManager.Settings?.ImagesData == null)
@@ -100,6 +108,8 @@ namespace ImmersiveGalleryAI.Main
             {
                 _keyboard.ChangePosition(_playerLocation.CameraRigTransform);
             }
+
+            _keyboard.SetActive(true);
         }
 
         private void InputFieldSelectedEventHandler()

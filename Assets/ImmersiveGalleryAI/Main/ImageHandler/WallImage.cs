@@ -64,6 +64,11 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _credits.NoCreditsLeftEvent -= NoCreditsLeftEventHandler;
         }
 
+        public void SetActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
+
         public void LoadPreviousImage(ImageData.ImageData imageData)
         {
             _currentImage = imageData;
@@ -80,7 +85,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             ControlPanelSetActive(false);
             _isPanelOpened = false;
         }
-        
+
         private void SaveButtonEventHandler()
         {
             // save image

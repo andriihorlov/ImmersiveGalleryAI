@@ -15,6 +15,11 @@ namespace ImmersiveGalleryAI.Main.ImageData
 
         public void DeleteImage(ImageData imageData)
         {
+            if (imageData == null)
+            {
+                return;
+            }
+            
             Settings.ImagesData.Remove(imageData);
             FileManager.DeleteImage(imageData.FilePath);
         }

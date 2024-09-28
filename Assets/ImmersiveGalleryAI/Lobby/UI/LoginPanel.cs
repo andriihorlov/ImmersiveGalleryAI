@@ -15,6 +15,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         public event Action ForgetPasswordClickedEvent;
         public event Action GuestClickedEvent;
         public event Action<string, string> LoginClickedEvent;
+        public event Action<TMP_InputField> InputFieldSelectedEvent;
 
         [SerializeField] private TMP_InputField _loginInputField;
         [SerializeField] private TMP_InputField _passwordInputField;
@@ -32,6 +33,9 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _registrationButton.onClick.AddListener(RegistrationButtonPressed);
             _forgetPasswordButton.onClick.AddListener(ForgetPasswordButtonPressed);
             _guestButton.onClick.AddListener(GuestButtonPressed);
+            
+            _loginInputField.onSelect.AddListener(LoginInputFieldSelected);
+            _passwordInputField.onSelect.AddListener(PasswordInputFieldSelected);
         }
 
         private void OnDisable()
@@ -40,8 +44,17 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _registrationButton.onClick.RemoveListener(RegistrationButtonPressed);
             _forgetPasswordButton.onClick.RemoveListener(ForgetPasswordButtonPressed);
             _guestButton.onClick.RemoveListener(GuestButtonPressed);
+            
+            _loginInputField.onSelect.RemoveListener(LoginInputFieldSelected);
+            _passwordInputField.onSelect.RemoveListener(PasswordInputFieldSelected);
         }
 
+        public void InitPlayerName(string playerName, string password)
+        {
+            _loginInputField.text = playerName;
+            _passwordInputField.text = password;
+        }
+        
         private void LoginButtonPressed()
         {
             _credits.SetCreditsBalance(DefaultGuestCreditBalance); // todo: change to the actual user balance
@@ -62,6 +75,16 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private void ForgetPasswordButtonPressed()
         {
             ForgetPasswordClickedEvent?.Invoke();
+        }
+
+        private void LoginInputFieldSelected(string arg0)
+        {
+            InputFieldSelectedEvent?.Invoke(_loginInputField);
+        }
+
+        private void PasswordInputFieldSelected(string arg0)
+        {
+            InputFieldSelectedEvent?.Invoke(_passwordInputField);
         }
 
 #if UNITY_EDITOR
@@ -87,5 +110,6 @@ namespace ImmersiveGalleryAI.Lobby.UI
             GuestButtonPressed();
         }
 #endif
+
     }
 }
