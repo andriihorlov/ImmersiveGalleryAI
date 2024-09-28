@@ -14,6 +14,7 @@ namespace ImmersiveGalleryAI.Common.Backend
         private const string DataBaseUsers = "Users";
         private const string DataBaseLoginName = "login";
         private const string DataBaseEmailName = "email";
+        private const string DataBaseImageLeftName = "imagesLeft";
 
         private const string AdminEmailKey = "AdminEmail";
         private const string DefaultApiKey = "DefaultApi";
@@ -86,7 +87,7 @@ namespace ImmersiveGalleryAI.Common.Backend
             DataSnapshot user = await GetUser(login);
             if (user != null)
             {
-                userEmail = GetSnapshotFieldData(user, DataBaseEmailName);
+                userEmail = GetSnapshotFieldString(user, DataBaseEmailName);
             }
 
             return userEmail;
@@ -107,7 +108,7 @@ namespace ImmersiveGalleryAI.Common.Backend
 
                 foreach (DataSnapshot snapshot in resultChildren)
                 {
-                    if (GetSnapshotFieldData(snapshot, DataBaseLoginName) != login)
+                    if (GetSnapshotFieldString(snapshot, DataBaseLoginName) != login)
                     {
                         continue;
                     }
@@ -121,9 +122,38 @@ namespace ImmersiveGalleryAI.Common.Backend
             return targetUserSnapshot;
         }
 
-        private string GetSnapshotFieldData(DataSnapshot dataSnapshot, string targetChild)
+        private string GetSnapshotFieldString(DataSnapshot dataSnapshot, string targetChild)
         {
             return dataSnapshot?.Child(targetChild).Value.ToString();
+        }
+        
+        private int GetSnapshotFieldInt(DataSnapshot dataSnapshot, string targetChild)
+        {
+             bool isParsed = int.TryParse(dataSnapshot?.Child(targetChild).Value.ToString(), out int result);
+             if (!isParsed)
+             {
+                 Debug.LogError($"Can't parse to INT -> {targetChild}");
+             }
+             
+             return result;
+        }
+
+        public async UniTask<UserModel> GetUserModel(string userName)
+        {
+            DataSnapshot user = await GetUser(userName);
+            if (user == null)
+            {
+                return null;
+            }
+
+            UserModel userModel = new UserModel
+            {
+                imagesLeft = GetSnapshotFieldInt(user, DataBaseImageLeftName), 
+                login = userName, 
+                email = GetSnapshotFieldString(user, DataBaseEmailName)
+            };
+
+            return userModel;
         }
     }
 }

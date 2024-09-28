@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using ImmersiveGalleryAI.Common.Backend;
+using ImmersiveGalleryAI.Common.User;
 using ImmersiveGalleryAI.Common.Utilities;
 using ImmersiveGalleryAI.Main.Credits;
 using UnityEngine;
@@ -16,6 +17,7 @@ namespace ImmersiveGalleryAI.Common.Settings
         [Inject] private IBackend _backend;
         [Inject] private ISettings _settings;
         [Inject] private ICredits _credits;
+        [Inject] private IUser _user;
 
         private void Start()
         {
@@ -39,6 +41,12 @@ namespace ImmersiveGalleryAI.Common.Settings
 
             _settings.UseOwnApi(localOpenAiApi);
             _credits.SetCreditType(isOwn: true);
+        }
+
+        [ContextMenu("GetUser login")]
+        private void GetUserLogin()
+        {
+            Debug.Log($"Login: {_user.GetCurrentUserLogin()}");
         }
     }
 }

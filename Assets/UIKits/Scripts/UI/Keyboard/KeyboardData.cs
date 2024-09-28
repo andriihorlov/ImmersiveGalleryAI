@@ -22,6 +22,7 @@ namespace VRUiKits.Utils
         [field: SerializeField] public Button BackspaceButton { get; private set; }
 
         [Inject] private IKeyboard _keyboard;
+        
         public bool IsUpperCase
         {
             get => _isUppercase;
@@ -32,13 +33,14 @@ namespace VRUiKits.Utils
         public Key[] KeyList => _keyList;
         public Transform KeyboardTransform => transform;
 
-        private void Awake()
+        private void Start()
         {
             if (_keyList?.Length < 1)
             {
                 Debug.Log($"Please fetch all items via ContextMenu");
+                return;
             }
-
+            
             _keyboard.Init(this);
         }
         

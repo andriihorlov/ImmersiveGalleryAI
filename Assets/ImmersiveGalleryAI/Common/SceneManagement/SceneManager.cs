@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ImmersiveGalleryAI.Common.SceneManagement
 {
@@ -12,15 +13,28 @@ namespace ImmersiveGalleryAI.Common.SceneManagement
             {SceneType.Main, "Main"}
         };
 
+        private Scene _currentScene;
+
         public async void LoadScene(SceneType sceneType)
         {
             string targetScene = SceneName[sceneType];
-            AsyncOperation loadingScene = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(targetScene);
-            loadingScene.allowSceneActivation = false;
-            while (loadingScene.progress < 0.9f)
+
+            if (!string.IsNullOrEmpty(_currentScene.name))
             {
-                await UniTask.Yield();
+                AsyncOperation unloadingScene = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(_currentScene.name);
+                await unloadingScene;
             }
+
+            _currentScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName(targetScene);
+
+            AsyncOperation loadingScene = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(_currentScene.name, LoadSceneMode.Additive);
+            loadingScene.allowSceneActivation = false;
+            // while (loadingScene.progress < 0.9f)
+            // {
+            //     await UniTask.Yield();
+            // }
+
+            await loadingScene;
 
             loadingScene.allowSceneActivation = true;
         }
