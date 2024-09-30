@@ -6,12 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/ImmersiveGalleryAI/ProjectContext/Scene/ProjectContext.unity
-    guid: 6d4facb6ea2409a43a6b0ef8f46c36d8
-  - enabled: 1
-    path: Assets/ImmersiveGalleryAI/Lobby/Content/Scene/Lobby.unity
-    guid: 9a0962e0305715746bdeb3f563c89f0f
-  - enabled: 1
     path: Assets/ImmersiveGalleryAI/Main/Content/Scene/Main.unity
     guid: daa97322f7549c14685f36a6acfc436e
   m_configObjects:
