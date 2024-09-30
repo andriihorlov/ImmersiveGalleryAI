@@ -40,13 +40,17 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private void Awake()
         {
             _additionalInformation.SetActive(true, AdditionalInfoType.Default);
+            _lowerPanel.SetActiveSaveDeleteButtons(false);
         }
 
         private void OnEnable()
         {
             _controlPanel.GenerateImageClicked += GenerateImageEventHandler;
+            _controlPanel.SaveClicked += SaveImageLocallyEventHandler;
+            _controlPanel.CancelClicked += CancelEventHandler;
+            
             _lowerPanel.EditButtonEvent += OpenPanelEventHandler;
-            _lowerPanel.SaveButtonEvent += SaveButtonEventHandler;
+            _lowerPanel.SaveButtonEvent += SaveImageBackendEventHandler;
             _lowerPanel.DeleteButtonEvent += DeleteClickedEventHandler;
             
             _credits.UpgradeBalanceEvent += UpgradeBalanceEventHandler;
@@ -56,8 +60,11 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private void OnDisable()
         {
             _controlPanel.GenerateImageClicked -= GenerateImageEventHandler;
+            _controlPanel.SaveClicked -= SaveImageLocallyEventHandler;
+            _controlPanel.CancelClicked -= CancelEventHandler;
+            
             _lowerPanel.EditButtonEvent -= OpenPanelEventHandler;
-            _lowerPanel.SaveButtonEvent -= SaveButtonEventHandler;
+            _lowerPanel.SaveButtonEvent -= SaveImageBackendEventHandler;
             _lowerPanel.DeleteButtonEvent -= DeleteClickedEventHandler;
             
             _credits.UpgradeBalanceEvent -= UpgradeBalanceEventHandler;
@@ -78,22 +85,30 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             CurrentMaterial.mainTexture = texture;
             
             _additionalInformation.SetActive(false);
+            _lowerPanel.SetActiveSaveDeleteButtons(true);
         }
 
         public void HideControlPanel()
         {
             ControlPanelSetActive(false);
+            LowerPanelSetActive(true);
             _isPanelOpened = false;
         }
-
-        private void SaveButtonEventHandler()
+        
+        [ContextMenu("Save image on backend")]
+        private void SaveImageBackendEventHandler()
         {
-            // save image
+            SaveImage(true);
         }
 
         private void ControlPanelSetActive(bool isActive)
         {
             _controlPanel.SetActive(isActive);
+        }
+        
+        private void LowerPanelSetActive(bool isActive)
+        {
+            _lowerPanel.SetActive(isActive);
         }
 
         private async void GenerateImageEventHandler()
@@ -109,29 +124,30 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             CurrentMaterial.mainTexture = _currentTexture;
             _controlPanel.ToggleButtons(true);
             _loadingLabel.SetActive(false);
-
+            _controlPanel.SetRegenerateButtons(true);
+            
             if (_currentTexture == null)
             {
+                _additionalInformation.SetActive(true);
                 return;
             }
 
             byte[] bytes = _currentTexture.EncodeToJPG();
             _currentImage = new ImageData.ImageData {FileContent = bytes, WallId = _wallId, Description = _controlPanel.InputField.text};
-            _imageDataManager.SaveImage(_currentImage);
-        }
-
-        [ContextMenu("Save image")]
-        private void ShareClickedEventHandler()
-        {
-            _imageDataManager.ShareImage(_currentImage);
-            UploadImage();
-        }
-
-        private async void UploadImage()
-        {
-            await _backend.UploadImageData(_currentImage);
+            _additionalInformation.SetActive(false);
+            _lowerPanel.SetActiveSaveDeleteButtons(true);
         }
         
+        private void SaveImageLocallyEventHandler()
+        {
+           SaveImage(false);
+        }
+
+        private void CancelEventHandler()
+        {
+            HideControlPanel();
+        }
+
         private void UpgradeBalanceEventHandler()
         {
             // sent email to admin with request possibility
@@ -160,7 +176,22 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         {
             OpenedPanel?.Invoke(this);
             _isPanelOpened = !_isPanelOpened;
+            LowerPanelSetActive(!_isPanelOpened);
             ControlPanelSetActive(_isPanelOpened);
+            
+        }
+
+        [ContextMenu("Save image")]
+        private async void SaveImage(bool isBackendSent)
+        {
+            _imageDataManager.SaveImage(_currentImage);
+            if (isBackendSent)
+            {
+                _loadingLabel.SetActive(true);
+                await _backend.UploadImageData(_currentImage);
+                _loadingLabel.SetActive(false);
+            }
+            HideControlPanel();
         }
 
         [ContextMenu("Generate image")]

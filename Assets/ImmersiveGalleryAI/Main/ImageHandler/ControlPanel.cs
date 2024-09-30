@@ -11,8 +11,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         public event Action GenerateImageClicked;
         public event Action InputFieldSelected;
         public event Action VoiceClicked;
-        // public event Action ShareClicked;
-        // public event Action DeleteClicked;
+        public event Action SaveClicked;
+        public event Action CancelClicked;
 
         private const string EnableMic = "Voice";
         private const string DisableMic = "Stop";
@@ -25,11 +25,15 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private const float HideScaleHeight = 0f;
 
         [SerializeField] private TMP_InputField _inputField;
-        [SerializeField] private Button _requestImageButton;
+        [SerializeField] private Button _generateButton;
         [SerializeField] private Button _voiceButton;
-        // [Space] [SerializeField] private Button _shareImageButton;
-        // [SerializeField] private Button _deleteImageButton;
         [Space] [SerializeField] private TextMeshProUGUI _voiceButtonText;
+
+        [Header("Generated buttons")]
+        [SerializeField] private GameObject _generatedButtons;
+        [SerializeField] private Button _cancelButton;
+        [SerializeField] private Button _saveButton;
+        [SerializeField] private Button _regenerateButton;
 
         private Transform _currentTransform;
         private bool _isMicEnabled;
@@ -43,27 +47,29 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
 
         private void OnEnable()
         {
-            _requestImageButton.onClick.AddListener(GenerateImageEventHandler);
+            _generateButton.onClick.AddListener(GenerateImageEventHandler);
             _inputField.onSelect.AddListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.AddListener(VoiceClickedEventHandler);
 
-            // _shareImageButton.onClick.AddListener(ShareClickedEventHandler);
-            // _deleteImageButton.onClick.AddListener(DeleteClickedEventHandler);
+            _cancelButton.onClick.AddListener(CancelClickedEventHandler);
+            _saveButton.onClick.AddListener(SaveClickedEventHandler);
+            _regenerateButton.onClick.AddListener(RegenerateClickedEventHandler);
         }
 
         private void OnDisable()
         {
-            _requestImageButton.onClick.RemoveListener(GenerateImageEventHandler);
+            _generateButton.onClick.RemoveListener(GenerateImageEventHandler);
             _inputField.onSelect.RemoveListener(InputFieldSelectedEventHandler);
             _voiceButton.onClick.RemoveListener(VoiceClickedEventHandler);
 
-            // _shareImageButton.onClick.RemoveListener(ShareClickedEventHandler);
-            // _deleteImageButton.onClick.RemoveListener(DeleteClickedEventHandler);
+            _cancelButton.onClick.RemoveListener(CancelClickedEventHandler);
+            _saveButton.onClick.RemoveListener(SaveClickedEventHandler);
+            _regenerateButton.onClick.RemoveListener(RegenerateClickedEventHandler);
         }
 
         public void ToggleButtons(bool isActive)
         {
-            _requestImageButton.enabled = isActive;
+            _generateButton.enabled = isActive;
             _inputField.enabled = isActive;
         }
 
@@ -86,6 +92,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
 
             if (isActive)
             {
+                SetRegenerateButtons(false);
                 gameObject.SetActive(true);
             }
 
@@ -98,6 +105,12 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
                         _currentTransform.gameObject.SetActive(false);
                     }
                 });
+        }
+        
+        public void SetRegenerateButtons(bool isActive)
+        {
+            _generatedButtons.SetActive(isActive);
+            _generateButton.gameObject.SetActive(!isActive);
         }
 
         private void GenerateImageEventHandler()
@@ -125,10 +138,23 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         // {
         //     ShareClicked?.Invoke();
         // }
-        //
-        // private void DeleteClickedEventHandler()
-        // {
-        //     DeleteClicked?.Invoke();
-        // }
+        
+        
+        private void CancelClickedEventHandler()
+        {
+            CancelClicked?.Invoke();
+        }
+        
+        private void SaveClickedEventHandler()
+        {
+            SaveClicked?.Invoke();
+        }
+
+        private void RegenerateClickedEventHandler()
+        {
+            GenerateImageClicked?.Invoke();
+        }
+
+
     }
 }

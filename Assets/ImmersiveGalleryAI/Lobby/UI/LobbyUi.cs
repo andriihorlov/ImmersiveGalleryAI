@@ -33,7 +33,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.SetActive(true);
             _registrationPanel.SetActive(false);
             _recoveryPanel.SetActive(false);
-
+            
             InitUserName();
         }
 
@@ -63,6 +63,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.GuestClickedEvent += GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent += BackToLoginPanel;
             _registrationPanel.GuestButtonEvent += GuestLoginEventHandler;
+            _registrationPanel.RegistratedEvent += RegistratedEventHandler;
             _recoveryPanel.BackToLoginEvent += ForgetPanelBackEventHandler;
 
             _loginPanel.InputFieldSelectedEvent += LoginPanelInputFieldEventHandler;
@@ -78,6 +79,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _loginPanel.GuestClickedEvent -= GuestLoginEventHandler;
             _registrationPanel.BackToLoginEvent -= BackToLoginPanel;
             _registrationPanel.GuestButtonEvent -= GuestLoginEventHandler;
+            _registrationPanel.RegistratedEvent -= RegistratedEventHandler;
             _recoveryPanel.BackToLoginEvent -= ForgetPanelBackEventHandler;
 
             _loginPanel.InputFieldSelectedEvent -= LoginPanelInputFieldEventHandler;
@@ -108,6 +110,13 @@ namespace ImmersiveGalleryAI.Lobby.UI
         {
             _recoveryPanel.SetActive(false);
             _loginPanel.SetCanvasInteractables(true);
+        }
+        
+        private void RegistratedEventHandler(string login, string password)
+        {
+            _loginPanel.InitPlayerName(login, password);
+            _registrationPanel.SetActive(false);
+            _loginPanel.SetActive(true);
         }
 
         private void LoginPanelInputFieldEventHandler(TMP_InputField tmpInputField)
@@ -171,13 +180,16 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private async void TryLoggedIn(string login, string password)
         {
             bool isLoggedSucceed = await _backend.Login(login, password);
-            if (isLoggedSucceed)
+            if (!isLoggedSucceed)
             {
-                UserModel userModel = await _backend.GetUserModel(login);
-                _user.SetUserData(userModel);
-                LoadMainScene();
-                PlayerPrefs.SetString(PlayerNamePrefs, login);
+                return;
             }
+
+            UserModel userModel = await _backend.GetUserModel(login);
+            _user.SetUserData(userModel);
+            LoadMainScene();
+            PlayerPrefs.SetString(PlayerNamePrefs, login);
+            PlayerPrefs.SetString(PlayerPasswordPrefs, password);
         }
 
         private void LoadMainScene()

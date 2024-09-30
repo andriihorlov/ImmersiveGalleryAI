@@ -10,11 +10,11 @@ namespace ImmersiveGalleryAI.Common.Backend
     public class BackendStorage
     {
         private const long MaxAllowedImageSize = 1024 * 1024;
-        private const string StorageUrl = "gs://immersivegalleryai.appspot.com/Images";
+        private const string StorageUrl = "gs://immersivegalleryai.appspot.com";
 
         private FirebaseStorage _firebaseStorageReference;
         private FirebaseStorage FirebaseStorageReference => _firebaseStorageReference ??= FirebaseStorage.DefaultInstance;
-
+        
         private string _currentUserLogin;
 
         public void Init(string userLogin)
@@ -40,15 +40,28 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         public async UniTask<bool> UploadImage(int wallId, byte[] bytes)
         {
+            if (bytes == null || bytes.Length == 0)
+            {
+                Logger.WriteLog("Image byte array is null or empty.", false);
+                return false;
+            }
+
+            if (bytes.Length > MaxAllowedImageSize)
+            {
+                Logger.WriteLog("Image size exceeds the maximum allowed size of 1 MB.", false);
+                return false;
+            }
+
             StorageReference storageRef = FirebaseStorageReference.GetReferenceFromUrl(StorageUrl);
             StorageReference wallImageRef = storageRef.Child(GetImagePath(_currentUserLogin, wallId));
-            
-            Debug.Log($"Wall Image ref: {wallImageRef.Path}");
+
+            Debug.Log($"Storage: {storageRef} | Image path: {wallImageRef.Path}");
 
             if (string.IsNullOrEmpty(wallImageRef.Path))
             {
                 return false;
             }
+            
             
             Task uploadImage = wallImageRef.PutBytesAsync(bytes).ContinueWithOnMainThread(task =>
             {
@@ -70,6 +83,6 @@ namespace ImmersiveGalleryAI.Common.Backend
         }
 
 
-        private string GetImagePath(string userName, int index) => $"images/{userName}/{userName}_{index}.jpg";
+        private string GetImagePath(string userName, int index) => $"images/users/{userName}/{userName}_{index}.jpg";
     }
 }

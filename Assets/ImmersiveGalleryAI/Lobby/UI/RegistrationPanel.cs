@@ -12,6 +12,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
     {
         public event Action BackToLoginEvent;
         public event Action GuestButtonEvent;
+        public event Action<string, string> RegistratedEvent;
         public event Action<TMP_InputField> InputFieldSelectedEvent;
 
         [SerializeField] private TMP_InputField _emailInputField;
@@ -96,7 +97,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
             bool isSuccess = await _backend.Registration(_loginInputField.text, _emailInputField.text, _passwordInputField.text);
             if (isSuccess)
             {
-                BackButtonClicked();
+                RegistratedEvent?.Invoke(_loginInputField.text, _passwordInputField.text);
                 return;
             }
 

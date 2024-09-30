@@ -112,7 +112,7 @@ namespace ImmersiveGalleryAI.Common.Backend
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                Logger.WriteLog("Can't logged!", false);
+                Logger.WriteLog("Can't find user email in database!", false);
                 return false;
             }
 
