@@ -10,7 +10,7 @@ namespace ImmersiveGalleryAI.Common.Loader
 
         private void Awake()
         {
-            SetActive(false);
+            _loaderImage.gameObject.SetActive(false);
         }
 
         public void SetActive(bool isActive)
@@ -29,7 +29,6 @@ namespace ImmersiveGalleryAI.Common.Loader
             // Disabling by StopCoroutine()
             while (true)
             {
-                
                 _loaderImage.fillAmount += Time.deltaTime;
                 if (_loaderImage.fillAmount > 0.98f)
                 {

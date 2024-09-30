@@ -27,7 +27,17 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _saveButton.onClick.RemoveListener(SaveButtonClicked);
             _deleteButton.onClick.RemoveListener(DeleteButtonClicked);
         }
+        
+        public void SetActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
 
+        public void SetActiveSaveDeleteButtons(bool isActive)
+        {
+            _deleteButton.interactable = isActive;
+            _saveButton.interactable = isActive;
+        }
 
         private void EditButtonClicked()
         {
