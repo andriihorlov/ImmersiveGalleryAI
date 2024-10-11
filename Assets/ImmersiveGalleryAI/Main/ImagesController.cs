@@ -29,8 +29,12 @@ namespace ImmersiveGalleryAI.Main
 
         private void OnEnable()
         {
+            _playerLocation.PlayerTeleportedEvent += PlayerTeleportedEventHandler;
+
             _voiceHandler.TranscriptionDoneEvent += RequestTranscriptEventHandler;
             _voiceHandler.StoppedListeningEvent += StoppedListeningEventHandler;
+            
+            _imageDataManager.UpdatePreviousImagesEvent += UpdatePreviousImagesEventHandler;
 
             foreach (WallImage wallImage in _images)
             {
@@ -38,20 +42,20 @@ namespace ImmersiveGalleryAI.Main
             }
         }
 
-        private void Start()
-        {
-            LoadPreviousImages();
-        }
-
         private void OnDisable()
         {
+            _playerLocation.PlayerTeleportedEvent -= PlayerTeleportedEventHandler;
+
             _voiceHandler.TranscriptionDoneEvent -= RequestTranscriptEventHandler;
             _voiceHandler.StoppedListeningEvent -= StoppedListeningEventHandler;
+            
+            _imageDataManager.UpdatePreviousImagesEvent -= UpdatePreviousImagesEventHandler;
 
             foreach (WallImage wallImage in _images)
             {
                 wallImage.OpenedPanel -= OpenedPanelEventHandler;
                 wallImage.ControlPanel.InputFieldSelected -= InputFieldSelectedEventHandler;
+                wallImage.ControlPanel.InputFieldEndEdit -= InputFieldEndEditEventHandler;
                 wallImage.ControlPanel.VoiceClicked -= VoiceClickedEventHandler;
             }
         }
@@ -67,6 +71,11 @@ namespace ImmersiveGalleryAI.Main
             {
                 wallImage.SetActive(isActive);
             }
+        }
+        
+        private void UpdatePreviousImagesEventHandler()
+        {
+            LoadPreviousImages();
         }
 
         private void LoadPreviousImages()
@@ -96,11 +105,14 @@ namespace ImmersiveGalleryAI.Main
                 }
 
                 _currentImagePanel.ControlPanel.InputFieldSelected -= InputFieldSelectedEventHandler;
+                wallImage.ControlPanel.InputFieldEndEdit -= InputFieldEndEditEventHandler;
                 _currentImagePanel.ControlPanel.VoiceClicked -= VoiceClickedEventHandler;
+                _keyboard.SetActive(false);
             }
 
             _currentImagePanel = wallImage;
             wallImage.ControlPanel.InputFieldSelected += InputFieldSelectedEventHandler;
+            wallImage.ControlPanel.InputFieldEndEdit += InputFieldEndEditEventHandler;
             wallImage.ControlPanel.VoiceClicked += VoiceClickedEventHandler;
 
             _keyboard.Target = wallImage.ControlPanel.InputField;
@@ -108,21 +120,29 @@ namespace ImmersiveGalleryAI.Main
             {
                 _keyboard.ChangePosition(_playerLocation.CameraRigTransform);
             }
-
-            _keyboard.SetActive(true);
         }
 
         private void InputFieldSelectedEventHandler()
         {
-            if (_keyboard.IsActive)
+            if (!_keyboard.IsActive)
             {
-                return;
+                _keyboard.ChangePosition(_playerLocation.CameraRigTransform);
+                _keyboard.SetActive(true);
             }
-
-            _keyboard.ChangePosition(_playerLocation.CameraRigTransform);
-            _keyboard.SetActive(true);
         }
 
+        private void InputFieldEndEditEventHandler()
+        {
+            if (_keyboard.IsActive)
+            {
+                _keyboard.SetActive(false);
+            }
+        }
+
+        private void PlayerTeleportedEventHandler()
+        {
+            _keyboard.SetActive(false, true);
+        }
 
 #region Voice recognition
 

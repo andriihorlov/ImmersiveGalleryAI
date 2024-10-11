@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using ImmersiveGalleryAI.Common.AudioSystem;
 using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.Loader;
 using ImmersiveGalleryAI.Common.Web;
@@ -26,12 +27,14 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private Material _currentMaterial;
         private ImageData.ImageData _currentImage;
         private Texture2D _currentTexture;
+        private Texture _defaultTexture;
         private bool _isPanelOpened;
 
         [Inject] private IWebManager _webManager;
         [Inject] private IImageDataManager _imageDataManager;
         [Inject] private IBackend _backend;
         [Inject] private ICredits _credits;
+        [Inject] private IAudioSystem _audioSystem;
 
         public int WallId => _wallId;
         public ControlPanel ControlPanel => _controlPanel;
@@ -39,6 +42,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
 
         private void Awake()
         {
+            _defaultTexture = CurrentMaterial.mainTexture;
             _additionalInformation.SetActive(true, AdditionalInfoType.Default);
             _lowerPanel.SetActiveSaveDeleteButtons(false);
         }
@@ -113,43 +117,52 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
 
         private async void GenerateImageEventHandler()
         {
-            CurrentMaterial.mainTexture = null;
+            if (!_credits.IsOwnCredits && _credits.GetCreditsBalance() < 1)
+            {
+                NoCreditsLeftEventHandler();
+                return;
+            }
+            
+            _audioSystem.PlayClickSfx();
             _loadingLabel.SetActive(true);
             _controlPanel.ToggleButtons(false);
             Task<Texture2D> resultedTexture = _webManager.GenerateImageEventHandler(_controlPanel.InputField.text);
             _credits.SpendCredit();
-            
+            _additionalInformation.SetActive(false);
             await resultedTexture;
-            _currentTexture = resultedTexture.Result;
-            CurrentMaterial.mainTexture = _currentTexture;
+            
             _controlPanel.ToggleButtons(true);
             _loadingLabel.SetActive(false);
             _controlPanel.SetRegenerateButtons(true);
+            _currentTexture = resultedTexture.Result;
             
             if (_currentTexture == null)
             {
-                _additionalInformation.SetActive(true);
+                _additionalInformation.SetActive(true, _webManager.ErrorMessage);
                 return;
             }
-
+            
+            CurrentMaterial.mainTexture = _currentTexture;
             byte[] bytes = _currentTexture.EncodeToJPG();
             _currentImage = new ImageData.ImageData {FileContent = bytes, WallId = _wallId, Description = _controlPanel.InputField.text};
-            _additionalInformation.SetActive(false);
             _lowerPanel.SetActiveSaveDeleteButtons(true);
         }
         
         private void SaveImageLocallyEventHandler()
-        {
-           SaveImage(false);
+        {   
+            _audioSystem.PlayClickSfx();
+            SaveImage(false);
         }
 
         private void CancelEventHandler()
         {
+            _audioSystem.PlayClickSfx();
             HideControlPanel();
         }
 
         private void UpgradeBalanceEventHandler()
         {
+            _audioSystem.PlayClickSfx();
             // sent email to admin with request possibility
         }
         
@@ -164,26 +177,33 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         [ContextMenu("Delete currentImage")]
         private void DeleteClickedEventHandler()
         {
+            _audioSystem.PlayClickSfx();
             _imageDataManager.DeleteImage(_currentImage);
             _currentImage = null;
             _currentTexture = null;
             //_resultedImage.sprite = null;
-            CurrentMaterial.mainTexture = null;
+            CurrentMaterial.mainTexture = _defaultTexture;
         }
 
         [ContextMenu("Open | Hide panel")]
         private void OpenPanelEventHandler()
         {
+            _audioSystem.PlayClickSfx();
             OpenedPanel?.Invoke(this);
             _isPanelOpened = !_isPanelOpened;
             LowerPanelSetActive(!_isPanelOpened);
             ControlPanelSetActive(_isPanelOpened);
-            
         }
 
         [ContextMenu("Save image")]
+        private void SaveImageEditor()
+        {
+            SaveImage(true);
+        }
+        
         private async void SaveImage(bool isBackendSent)
         {
+            _audioSystem.PlayClickSfx();
             _imageDataManager.SaveImage(_currentImage);
             if (isBackendSent)
             {
