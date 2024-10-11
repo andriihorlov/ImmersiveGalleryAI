@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1019804831759",
+    "firebase_url": "https://immersivegalleryai-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "immersivegalleryai",
+    "storage_bucket": "immersivegalleryai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019804831759:android:ca6153ef8e8f390795137a",
+        "android_client_info": {
+          "package_name": "com.FidgetLand.ImmersiveGalleryAI"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7w9XeQMPHj8C9qQ6gfKJuzyjHvoqAif0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

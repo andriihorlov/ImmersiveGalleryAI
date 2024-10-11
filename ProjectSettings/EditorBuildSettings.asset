@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/ImmersiveGalleryAI/Content/Scenes/Main.unity
-    guid: 3b470a949774ed24082801b212f721e3
+    path: Assets/ImmersiveGalleryAI/Main/Content/Scene/Main_updated.unity
+    guid: 08b4cd280daf3d043a1eb384663816b9
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: f8f873c7f00d061449066e0484d17bd2, type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: ab09fecbbbbefac46bb152d762cb7892, type: 2}
