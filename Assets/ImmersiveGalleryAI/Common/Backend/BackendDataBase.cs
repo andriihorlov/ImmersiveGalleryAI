@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using Firebase.Database;
 using Firebase.Extensions;
 using ImmersiveGalleryAI.Common.Settings;
+using ImmersiveGalleryAI.Main.ImageData;
 using UnityEngine;
 using Logger = ImmersiveGalleryAI.Common.Utilities.Logger;
 
@@ -17,10 +18,16 @@ namespace ImmersiveGalleryAI.Common.Backend
         private const string DataBaseLoginName = "login";
         private const string DataBaseEmailName = "email";
         private const string DataBaseImageLeftName = "imagesLeft";
+        
+        private const string DataBaseImageSettings = "imageSettings";
+        private const string DataBaseImageWallId = "wallId";
+        private const string DataBaseImageDescription = "description";
+        private const string DataBaseImageImagePath = "imagePath";
 
         private const string AdminEmailKey = "AdminEmail";
         private const string DefaultApiKey = "DefaultApi";
         private const string FreeImageCountKey = "FreeImageCount";
+        private const string IsTestCountKey = "IsTest";
 
         private int _wallImageCount;
         
@@ -81,6 +88,9 @@ namespace ImmersiveGalleryAI.Common.Backend
                                 break;
                             case FreeImageCountKey:
                                 settingsData.FreeImageCount = int.Parse(snapshot.Value.ToString());
+                                break;   
+                            case IsTestCountKey:
+                                settingsData.IsTest = bool.Parse(snapshot.Value.ToString());
                                 break;
                         }
                     }
@@ -161,10 +171,43 @@ namespace ImmersiveGalleryAI.Common.Backend
             {
                 imagesLeft = GetSnapshotFieldInt(user, DataBaseImageLeftName),
                 login = userName,
-                email = GetSnapshotFieldString(user, DataBaseEmailName)
+                email = GetSnapshotFieldString(user, DataBaseEmailName),
             };
 
+            List<ImageSetting> imageSettings = new List<ImageSetting>(); 
+            
+            foreach (DataSnapshot imageSnapshot in user.Child(DataBaseImageSettings).Children)
+            {
+                ImageSetting imageSetting = new ImageSetting()
+                {
+                    wallId = GetSnapshotFieldInt(imageSnapshot, DataBaseImageWallId),
+                    description = GetSnapshotFieldString(imageSnapshot, DataBaseImageDescription),
+                    imagePath = GetSnapshotFieldString(imageSnapshot, DataBaseImageImagePath)
+                };
+                imageSettings.Add(imageSetting);
+            }
+
+            userModel.imageSettings = imageSettings.ToArray();
             return userModel;
+        }
+        
+        public async Task UploadImageData(ImageData imageData, string currentUserLogin, string dataBasePath)
+        {
+            UserModel userModel = await GetUserModel(currentUserLogin);
+            foreach (ImageSetting userImage in userModel.imageSettings)
+            {
+                if (userImage.wallId != imageData.WallId)
+                {
+                    continue;
+                }
+
+                userImage.description = imageData.Description;
+                userImage.imagePath = dataBasePath;
+                break;
+            }
+
+            await FirebaseGetDataBaseReference.Child(currentUserLogin).Child(DataBaseImageSettings).Child(imageData.WallId.ToString()).SetRawJsonValueAsync(JsonUtility.ToJson(userModel))
+                .ContinueWithOnMainThread(task => { Logger.WriteTask(task, "Add data to DB"); });
         }
     }
 }

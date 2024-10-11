@@ -14,7 +14,7 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         private FirebaseStorage _firebaseStorageReference;
         private FirebaseStorage FirebaseStorageReference => _firebaseStorageReference ??= FirebaseStorage.DefaultInstance;
-        
+
         private string _currentUserLogin;
 
         public void Init(string userLogin)
@@ -22,9 +22,9 @@ namespace ImmersiveGalleryAI.Common.Backend
             _currentUserLogin = userLogin;
         }
 
-        public async UniTask<byte[]> DownloadImage(string userName, int wallId)
+        public async UniTask<byte[]> DownloadImage(string imagePath)
         {
-            StorageReference storageRef = FirebaseStorageReference.GetReferenceFromUrl(GetImagePath(userName, wallId));
+            StorageReference storageRef = FirebaseStorageReference.RootReference.Child(imagePath);
             byte[] bytes = null;
 
             await storageRef.GetBytesAsync(MaxAllowedImageSize).ContinueWithOnMainThread(task =>
@@ -38,18 +38,18 @@ namespace ImmersiveGalleryAI.Common.Backend
             return bytes;
         }
 
-        public async UniTask<bool> UploadImage(int wallId, byte[] bytes)
+        public async UniTask<string> UploadImage(int wallId, byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0)
             {
                 Logger.WriteLog("Image byte array is null or empty.", false);
-                return false;
+                return null;
             }
 
             if (bytes.Length > MaxAllowedImageSize)
             {
                 Logger.WriteLog("Image size exceeds the maximum allowed size of 1 MB.", false);
-                return false;
+                return null;
             }
 
             StorageReference storageRef = FirebaseStorageReference.GetReferenceFromUrl(StorageUrl);
@@ -59,10 +59,9 @@ namespace ImmersiveGalleryAI.Common.Backend
 
             if (string.IsNullOrEmpty(wallImageRef.Path))
             {
-                return false;
+                return null;
             }
-            
-            
+
             Task uploadImage = wallImageRef.PutBytesAsync(bytes).ContinueWithOnMainThread(task =>
             {
                 Logger.WriteTask(task, "Upload file");
@@ -78,8 +77,7 @@ namespace ImmersiveGalleryAI.Common.Backend
             });
 
             await uploadImage;
-            
-            return uploadImage.IsCompletedSuccessfully;
+            return uploadImage.IsCompletedSuccessfully ? wallImageRef.Path : null;
         }
 
 
