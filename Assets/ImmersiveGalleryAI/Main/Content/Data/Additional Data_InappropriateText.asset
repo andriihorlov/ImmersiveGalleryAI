@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e13e9272aa5649e69e7e9fa2bdff8b52, type: 3}
   m_Name: Additional Data_InappropriateText
   m_EditorClassIdentifier: 
-  InfoType: 2
+  InfoType: 3
   InfoSprite: {fileID: 21300000, guid: e94abe20241a5784c9b10e389e0f8e9c, type: 3}
   InfoDescription: Inappropriate message, please check our  platform rules

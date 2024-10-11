@@ -8,15 +8,21 @@ namespace ImmersiveGalleryAI.Common.Web
     public class WebData : MonoBehaviour
     {
         [SerializeField] private Texture2D[] _randomTextures;
-        [SerializeField] private bool _isAi = false;
+        [SerializeField] private bool _isForcedDisableAi = false;
 
         [Inject] private IWebManager _webManager;
         [Inject] private ISettings _settings;
 
         private IEnumerator Start()
         {
-            yield return new WaitForEndOfFrame();
-            _webManager.Init(_randomTextures, _isAi, _settings.GetCurrentApi());
+            yield return new WaitUntil(() => _settings.IsSettingsReady);
+            bool isAi = _settings.GetIsAiUse();
+            if (_isForcedDisableAi)
+            {
+                isAi = false;
+            }
+
+            _webManager.Init(_randomTextures, isAi, _settings.GetCurrentApi());
         }
     }
 }

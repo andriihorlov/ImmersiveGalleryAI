@@ -16,7 +16,7 @@ namespace ImmersiveGalleryAI.Lobby.Editor
         }
 
         private const string DefaultUserName = "fidg";
-        private const string DefaultUserPassword = "fidgfidg";
+        private const string DefaultUserPassword = "111111";
 
         private LoginPanel _loginPanel;
         private LoginPanel LoginPanel => _loginPanel ??= FindObjectOfType<LoginPanel>();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace ImmersiveGalleryAI.Main.ImageData
 {

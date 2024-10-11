@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ImmersiveGalleryAI.Common.Utilities;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ namespace ImmersiveGalleryAI.Main.ImageData
 {
     public class ImageImageDataManager : IImageDataManager
     {
+        public event Action UpdatePreviousImagesEvent;
         public AllImages Settings { get; private set; }
 
         public void SaveSettings()
@@ -26,7 +28,7 @@ namespace ImmersiveGalleryAI.Main.ImageData
 
         public void SaveImage(ImageData imageData)
         {
-            ImageData newImageData = FileManager.SaveImage(imageData.WallId, imageData.FileContent);
+            ImageData newImageData = FileManager.SaveNewImage(imageData);
             AddImageInSettings(newImageData);
         }
 
@@ -37,6 +39,11 @@ namespace ImmersiveGalleryAI.Main.ImageData
             // NativeGallery.CheckPermission(NativeGallery.PermissionType.Write, NativeGallery.MediaType.Image);
             // NativeGallery.SaveImageToGallery(imageData.FileContent, "Album", imageData.FileName);
             //SendEmail.Send(imageData);
+        }
+
+        public void UpdatePreviousImages()
+        {
+            UpdatePreviousImagesEvent?.Invoke();
         }
 
         public void LoadSettings()

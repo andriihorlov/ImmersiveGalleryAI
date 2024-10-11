@@ -17,10 +17,9 @@ namespace ImmersiveGalleryAI.Common.Utilities
 
         private static readonly string FilePathFormat = $"{DefaultFolder}{ImageFolder}";
 
-        public static ImageData SaveImage(int wallId, byte[] content)
+        public static ImageData SaveNewImage(ImageData imageData)
         {
-            string fileName = ImageDefaultName + DateTime.Now.ToFileTime();
-            ImageData imageData = new ImageData {WallId = wallId, FileContent = content, FileName = fileName};
+            imageData.FileName = ImageDefaultName + DateTime.Now.ToFileTime();
             SaveImage(imageData);
             return imageData;
         }

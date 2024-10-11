@@ -26,6 +26,12 @@ namespace ImmersiveGalleryAI.Lobby.UI
             });
         }
 
+        public void SetActiveImmediate(bool isActive)
+        {
+            _canvasGroup.alpha = isActive ? 1f : 0f;
+            _canvasGroup.gameObject.SetActive(isActive);
+        }
+
         public void SetCanvasInteractables(bool isActive)
         {
             _canvasGroup.interactable = isActive;

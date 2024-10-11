@@ -15,6 +15,8 @@ namespace ImmersiveGalleryAI.Common.Web
         
         private int _randomIndex = 0;
 
+        public string ErrorMessage { get; private set; }
+
         public async Task<Texture2D> GenerateImageEventHandler(string text)
         {
             Texture2D resultedSprite = null;
@@ -64,10 +66,10 @@ namespace ImmersiveGalleryAI.Common.Web
                 Prompt = text,
                 Size = ImageSize.Size256
             });
-        
+            
             Texture2D createdTexture = null;
-        
-            if (response.Data.Count > 0)
+
+            if (response.Data?.Count > 0)
             {
                 using UnityWebRequest request = new UnityWebRequest(response.Data[0].Url)
                 {
@@ -85,6 +87,7 @@ namespace ImmersiveGalleryAI.Common.Web
             }
             else
             {
+                ErrorMessage = response.Error.Message;
                 Debug.LogWarning("No image was created from this prompt.");
             }
         
