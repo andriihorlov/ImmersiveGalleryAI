@@ -8,5 +8,6 @@ namespace ImmersiveGalleryAI.Common.Settings
         public string AdminEmail;
         public string DefaultApi;
         public int FreeImageCount;
+        public bool IsTest;
     }
 }
