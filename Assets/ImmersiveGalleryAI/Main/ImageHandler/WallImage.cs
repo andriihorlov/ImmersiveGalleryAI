@@ -57,8 +57,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _lowerPanel.SaveButtonEvent += SaveImageBackendEventHandler;
             _lowerPanel.DeleteButtonEvent += DeleteClickedEventHandler;
             
-            _credits.UpgradeBalanceEvent += UpgradeBalanceEventHandler;
             _credits.NoCreditsLeftEvent += NoCreditsLeftEventHandler;
+            _upperPanel.RequestUpgradeBalance += RequestUpgradeBalanceEventHandler;
         }
 
         private void OnDisable()
@@ -71,8 +71,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _lowerPanel.SaveButtonEvent -= SaveImageBackendEventHandler;
             _lowerPanel.DeleteButtonEvent -= DeleteClickedEventHandler;
             
-            _credits.UpgradeBalanceEvent -= UpgradeBalanceEventHandler;
             _credits.NoCreditsLeftEvent -= NoCreditsLeftEventHandler;
+            _upperPanel.RequestUpgradeBalance -= RequestUpgradeBalanceEventHandler;
         }
 
         public void SetActive(bool isActive)
@@ -90,6 +90,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             
             _additionalInformation.SetActive(false);
             _lowerPanel.SetActiveSaveDeleteButtons(true);
+            _controlPanel.InitPreviousText(imageData.Description);
         }
 
         public void HideControlPanel()
@@ -160,10 +161,10 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             HideControlPanel();
         }
 
-        private void UpgradeBalanceEventHandler()
+        private void RequestUpgradeBalanceEventHandler()
         {
             _audioSystem.PlayClickSfx();
-            // sent email to admin with request possibility
+            _credits.RequestUpgradeBalance();
         }
         
         private void NoCreditsLeftEventHandler()
@@ -181,7 +182,6 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _imageDataManager.DeleteImage(_currentImage);
             _currentImage = null;
             _currentTexture = null;
-            //_resultedImage.sprite = null;
             CurrentMaterial.mainTexture = _defaultTexture;
         }
 
@@ -218,6 +218,16 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         private void GenerateImage()
         {
             GenerateImageEventHandler();
+        }
+
+        public void HideUpperPanel()
+        {
+            _upperPanel.SetActive(false);
+        }
+
+        public void UpdateCreditsBalance(int newCredits)
+        {
+            _upperPanel.UpdateBalance(newCredits);
         }
     }
 }

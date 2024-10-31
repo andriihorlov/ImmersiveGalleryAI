@@ -71,7 +71,11 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
             _regenerateButton.onClick.RemoveListener(RegenerateClickedEventHandler);
         }
 
-
+        public void InitPreviousText(string previousText)
+        {
+            _inputField.text = previousText;
+        }
+        
         public void ToggleButtons(bool isActive)
         {
             _generateButton.enabled = isActive;

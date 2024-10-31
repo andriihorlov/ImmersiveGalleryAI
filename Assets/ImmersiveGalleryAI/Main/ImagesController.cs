@@ -2,7 +2,9 @@
 using System.Linq;
 using ImmersiveGalleryAI.Common.Keyboard;
 using ImmersiveGalleryAI.Common.PlayerLocation;
+using ImmersiveGalleryAI.Common.User;
 using ImmersiveGalleryAI.Common.VoiceRecognition;
+using ImmersiveGalleryAI.Main.Credits;
 using ImmersiveGalleryAI.Main.ImageData;
 using ImmersiveGalleryAI.Main.ImageHandler;
 using UnityEngine;
@@ -16,15 +18,26 @@ namespace ImmersiveGalleryAI.Main
 
         private WallImage _currentImagePanel;
         private bool _isMicEnabled;
+        private string _currentUserLogin;
 
         [Inject] private IVoiceHandler _voiceHandler;
         [Inject] private IImageDataManager _imageDataManager;
         [Inject] private IKeyboard _keyboard;
         [Inject] private IPlayerLocation _playerLocation;
+        [Inject] private IUser _user;
+        [Inject] private ICredits _credits;
 
-        private void Awake()
+        private void Start()
         {
-            _imageDataManager.LoadSettings();
+            if (!_credits.IsOwnCredits)
+            {
+                return;
+            }
+
+            foreach (WallImage wallImage in _images)
+            {
+                wallImage.HideUpperPanel();
+            }
         }
 
         private void OnEnable()
@@ -35,6 +48,7 @@ namespace ImmersiveGalleryAI.Main
             _voiceHandler.StoppedListeningEvent += StoppedListeningEventHandler;
             
             _imageDataManager.UpdatePreviousImagesEvent += UpdatePreviousImagesEventHandler;
+            _credits.UpdateBalanceEvent += UpdateCreditsBalanceEventHandler;
 
             foreach (WallImage wallImage in _images)
             {
@@ -50,6 +64,7 @@ namespace ImmersiveGalleryAI.Main
             _voiceHandler.StoppedListeningEvent -= StoppedListeningEventHandler;
             
             _imageDataManager.UpdatePreviousImagesEvent -= UpdatePreviousImagesEventHandler;
+            _credits.UpdateBalanceEvent -= UpdateCreditsBalanceEventHandler;
 
             foreach (WallImage wallImage in _images)
             {
@@ -62,7 +77,7 @@ namespace ImmersiveGalleryAI.Main
 
         private void OnApplicationQuit()
         {
-            _imageDataManager.SaveSettings();
+            _imageDataManager.SaveSettings(_currentUserLogin);
         }
 
         public void SetActive(bool isActive)
@@ -71,11 +86,24 @@ namespace ImmersiveGalleryAI.Main
             {
                 wallImage.SetActive(isActive);
             }
+
+            if (isActive)
+            {
+                _currentUserLogin = _user.GetCurrentUserLogin();
+            }
         }
         
         private void UpdatePreviousImagesEventHandler()
         {
             LoadPreviousImages();
+        }
+        
+        private void UpdateCreditsBalanceEventHandler(int credits)
+        {
+            foreach (WallImage wallImage in _images)
+            {
+                wallImage.UpdateCreditsBalance(credits);
+            }
         }
 
         private void LoadPreviousImages()

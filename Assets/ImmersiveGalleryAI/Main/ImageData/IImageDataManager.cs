@@ -7,8 +7,8 @@ namespace ImmersiveGalleryAI.Main.ImageData
         event Action UpdatePreviousImagesEvent;
         
         AllImages Settings { get; }
-        void SaveSettings();
-        void LoadSettings();
+        void SaveSettings(string owner);
+        void LoadSettings(string owner);
         void DeleteImage(ImageData imageData);
         void SaveImage(ImageData imageData);
         void ShareImage(ImageData imageData);

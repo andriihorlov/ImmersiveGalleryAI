@@ -7,6 +7,7 @@ namespace ImmersiveGalleryAI.Main.ImageData
     [Serializable]
     public class AllImages
     {
+        public string Owner;
         public List<ImageData> ImagesData;
     }
 
