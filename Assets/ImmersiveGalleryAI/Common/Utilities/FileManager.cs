@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ImmersiveGalleryAI.Main.ImageData;
 using UnityEngine;
@@ -11,23 +12,25 @@ namespace ImmersiveGalleryAI.Common.Utilities
         private const string ImagesListFileName = "/Settings";
         private const string OpenAiSettingsFileName = "/OpenAiAPI.json";
 
-        private const string ImageFolder = "/AppData/";
         private const string ImageFormat = ".jpg";
         private const string ImageDefaultName = "Img";
 
-        private static readonly string FilePathFormat = $"{DefaultFolder}{ImageFolder}";
-
-        public static ImageData SaveNewImage(ImageData imageData)
+        public static ImageData SaveNewImage(ImageData imageData, string owner)
         {
             imageData.FileName = ImageDefaultName + DateTime.Now.ToFileTime();
-            SaveImage(imageData);
+            SaveImage(imageData, owner);
             return imageData;
         }
 
-        public static AllImages LoadAllImages()
+        public static AllImages LoadAllImages(string owner)
         {
-            string settingsJson = Load(DefaultFolder + ImagesListFileName);
-            return GetModelData<AllImages>(settingsJson);
+            AllImages modelData = GetModelData<AllImages>(Load(GetUserFolder(owner)));
+            if (modelData == null)
+            {
+                modelData = new AllImages {Owner = owner, ImagesData = new List<ImageData>()};
+            }
+            
+            return modelData;
         }
 
         public static void DeleteImage(string filePath)
@@ -39,9 +42,9 @@ namespace ImmersiveGalleryAI.Common.Utilities
             }
         }
 
-        public static void SaveImages(AllImages allImages)
+        public static void SaveImages(AllImages allImages, string owner)
         {
-            string filePath = DefaultFolder + ImagesListFileName;
+            string filePath = GetUserFolder(owner) + ImagesListFileName;
             CreateFileDirectoryIfNeeded(filePath);
 
             string jsonData = GetJsonData(allImages);
@@ -80,9 +83,9 @@ namespace ImmersiveGalleryAI.Common.Utilities
             Debug.Log($"Open AI template file created");
         }
 
-        private static void SaveImage(ImageData jsonData)
+        private static void SaveImage(ImageData jsonData, string owner)
         {
-            string filePath = FilePathFormat + jsonData.FileName + ImageFormat;
+            string filePath = GetUserFolder(owner) + jsonData.FileName + ImageFormat;
             jsonData.FilePath = filePath;
             CreateFileDirectoryIfNeeded(filePath);
             File.WriteAllBytes(filePath, jsonData.FileContent);
@@ -120,14 +123,8 @@ namespace ImmersiveGalleryAI.Common.Utilities
             fileStream.Dispose();
         }
 
-        private static string GetJsonData<T>(T savedFile)
-        {
-            return JsonUtility.ToJson(savedFile);
-        }
-
-        private static T GetModelData<T>(string jsonData)
-        {
-            return JsonUtility.FromJson<T>(jsonData);
-        }
+        private static string GetUserFolder(string owner) => Path.Combine(DefaultFolder, owner);
+        private static string GetJsonData<T>(T savedFile) => JsonUtility.ToJson(savedFile);
+        private static T GetModelData<T>(string jsonData) => JsonUtility.FromJson<T>(jsonData);
     }
 }
