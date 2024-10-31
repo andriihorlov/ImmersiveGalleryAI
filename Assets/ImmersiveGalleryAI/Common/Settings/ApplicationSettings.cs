@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using ImmersiveGalleryAI.Common.AudioSystem;
 using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.User;
@@ -15,10 +12,6 @@ namespace ImmersiveGalleryAI.Common.Settings
 {
     public class ApplicationSettings : MonoBehaviour
     {
-        [Tooltip("Count of image places")]
-        [SerializeField]
-        public int _wallImages = 11;
-
         [Inject] private IBackend _backend;
         [Inject] private ISettings _settings;
         [Inject] private ICredits _credits;
@@ -32,12 +25,18 @@ namespace ImmersiveGalleryAI.Common.Settings
             _audioSystem.PlayMusic();
         }
 
+        private void OnEnable()
+        {
+            _credits.RequestUpgradeBalanceEvent += RequestCreditUpgradeEventHandler;
+        }
+
+        private void OnDisable()
+        {
+            _credits.RequestUpgradeBalanceEvent -= RequestCreditUpgradeEventHandler;
+        }
+
         private async void InitSettings()
         {
-            UniTask<SettingsData> settings = _backend.GetApplicationSettings();
-            SettingsData settingsData = await settings;
-            _settings.SetSettings(settingsData);
-
             await FillImagesFromBackend();
             _imageDataManager.UpdatePreviousImages();
 
@@ -46,7 +45,6 @@ namespace ImmersiveGalleryAI.Common.Settings
             {
                 Debug.Log($"Local AI settings not exist");
                 SetCredits();
-                _backend.SetWallImagesCount(_wallImages, _user.GetUserCredits());
                 _credits.SetCreditType(isOwn: false);
                 return;
             }
@@ -59,7 +57,7 @@ namespace ImmersiveGalleryAI.Common.Settings
         private async Task FillImagesFromBackend()
         {
             ImageSetting[] backendImages = _user.GetImageSettings();
-            _imageDataManager.LoadSettings();
+            _imageDataManager.LoadSettings(_user.GetCurrentUserLogin());
             AllImages localImages = _imageDataManager.Settings;
 
             foreach (ImageSetting backendImage in backendImages)
@@ -85,8 +83,7 @@ namespace ImmersiveGalleryAI.Common.Settings
                 {
                     continue;
                 }
-
-                Debug.Log($"Local: {backendImage.wallId} ({backendImage.description})");
+                
                 await DownloadAndSaveImage(backendImage);
             }
             
@@ -115,12 +112,14 @@ namespace ImmersiveGalleryAI.Common.Settings
             };
         }
 
-        private void SetCredits() => _credits.SetCreditsBalance(_user.GetUserCredits());
-
-        [ContextMenu("GetUser login")]
-        private void GetUserLogin()
+        private void RequestCreditUpgradeEventHandler()
         {
-            Debug.Log($"Login: {_user.GetCurrentUserLogin()}");
+            _backend.SendRequestEmailFrom(_user.GetUserEmail());
+        }
+
+        private void SetCredits()
+        {
+            _credits.SetCreditsBalance(_user.GetUserCredits());
         }
     }
 }
