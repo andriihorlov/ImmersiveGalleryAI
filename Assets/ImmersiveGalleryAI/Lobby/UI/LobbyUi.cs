@@ -1,5 +1,4 @@
-﻿using System.Text;
-using ImmersiveGalleryAI.Common.AudioSystem;
+﻿using ImmersiveGalleryAI.Common.AudioSystem;
 using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.Experience;
 using ImmersiveGalleryAI.Common.Keyboard;
@@ -48,24 +47,6 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _lobbyWalls.SetActive(true);
         }
 
-        private void InitUserName()
-        {
-            string playerName = PlayerPrefs.GetString(PlayerNamePrefs);
-            if (string.IsNullOrEmpty(playerName))
-            {
-                return;
-            }
-
-            string password = PlayerPrefs.GetString(PlayerPasswordPrefs);
-            if (string.IsNullOrEmpty(password))
-            {
-                Debug.LogError($"Can't find saved password.");
-                return;
-            }
-
-            _loginPanel.InitPlayerName(playerName, password);
-        }
-
         private void OnEnable()
         {
             _loginPanel.RegistrationClickedEvent += RegistrationLoginClickEventHandler;
@@ -105,6 +86,24 @@ namespace ImmersiveGalleryAI.Lobby.UI
             gameObject.SetActive(isActive);
         }
 
+        private void InitUserName()
+        {
+            string playerName = PlayerPrefs.GetString(PlayerNamePrefs);
+            if (string.IsNullOrEmpty(playerName))
+            {
+                return;
+            }
+
+            string password = PlayerPrefs.GetString(PlayerPasswordPrefs);
+            if (string.IsNullOrEmpty(password))
+            {
+                Debug.LogError($"Can't find saved password.");
+                return;
+            }
+
+            _loginPanel.InitPlayerName(playerName, password);
+        }
+        
         private void RegistrationLoginClickEventHandler()
         {
             PlayClickSfx();
@@ -214,7 +213,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private async void TryLoggedIn(string login, string password)
         {
             login = login.ToLower();
-            
+
             bool isLoggedSucceed = await _backend.Login(login, password);
             if (!isLoggedSucceed)
             {
@@ -237,11 +236,5 @@ namespace ImmersiveGalleryAI.Lobby.UI
         }
 
         private void PlayClickSfx() => _audioSystem.PlayClickSfx();
-        
-        [ContextMenu("Check database")]
-        private void CheckDatabase()
-        {
-            _backend.GetApplicationSettings();
-        }
     }
 }
