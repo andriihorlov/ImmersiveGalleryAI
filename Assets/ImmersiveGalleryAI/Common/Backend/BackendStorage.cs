@@ -69,11 +69,6 @@ namespace ImmersiveGalleryAI.Common.Backend
                 {
                     return;
                 }
-
-                StorageMetadata metadata = task.Result;
-                string md5Hash = metadata.Md5Hash;
-                Debug.Log("Finished uploading...");
-                Debug.Log("md5 hash = " + md5Hash);
             });
 
             await uploadImage;

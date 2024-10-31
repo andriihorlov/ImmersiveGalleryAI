@@ -141,8 +141,6 @@ namespace ImmersiveGalleryAI.Common.Backend
 
             foreach (DataSnapshot imageSnapshot in user.Child(DataBaseImageSettings).Children)
             {
-                Debug.Log($"Data snapshot: {imageSnapshot.Key}");
-
                 ImageSetting imageSetting = new ImageSetting()
                 {
                     wallId = GetSnapshotFieldInt(imageSnapshot, DataBaseImageWallId),
@@ -183,6 +181,14 @@ namespace ImmersiveGalleryAI.Common.Backend
                 .SetRawJsonValueAsync(JsonUtility.ToJson(imageSetting))
                 .ContinueWithOnMainThread(task => { Logger.WriteTask(task, "Add data to DB"); });
         }
+        
+        public async void UpdateCreditsBalance(string currentUserLogin, int creditsBalance)
+        {
+            await FirebaseGetDataBaseReference.Child(currentUserLogin.ToLower())
+                .Child(DataBaseImageLeftName)
+                .SetValueAsync(creditsBalance)
+                .ContinueWithOnMainThread(task => { Logger.WriteTask(task, "Credits updated"); });
+        }
 
         private async UniTask<DataSnapshot> GetUser(string login)
         {
@@ -217,8 +223,8 @@ namespace ImmersiveGalleryAI.Common.Backend
         private bool IsLoginEqualWithoutCase(string snapshotLogin, string currentLogin) => string.Equals(snapshotLogin.ToLower(), currentLogin.ToLower());
 
         private string GetSnapshotFieldString(DataSnapshot dataSnapshot, string targetChild)
-        {
-            return dataSnapshot?.Child(targetChild) == null ? null : dataSnapshot?.Child(targetChild).Value.ToString();
+        { 
+            return dataSnapshot?.Child(targetChild) == null ? null : dataSnapshot?.Child(targetChild).Value?.ToString();
         }
 
         private int GetSnapshotFieldInt(DataSnapshot dataSnapshot, string targetChild)
@@ -231,5 +237,6 @@ namespace ImmersiveGalleryAI.Common.Backend
 
             return result;
         }
+        
     }
 }

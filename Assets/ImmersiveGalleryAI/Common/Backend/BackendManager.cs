@@ -110,6 +110,11 @@ namespace ImmersiveGalleryAI.Common.Backend
             _wasUpgradeRequestSent = true;
         }
 
+        public void UpdateCreditsBalance(int creditsBalance)
+        {
+            _backendDataBase.UpdateCreditsBalance(_currentUserLogin, creditsBalance);
+        }
+
         public async UniTask GuestEnter()
         {
             string deviceId = SystemInfo.deviceUniqueIdentifier;

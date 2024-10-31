@@ -8146,7 +8146,7 @@ PrefabInstance:
       objectReference: {fileID: 3177232254315139758, guid: a4d0d72bf7ff94045916c91405895eb9, type: 3}
     - target: {fileID: 7990873191231833673, guid: 5eccbf4be2c00e94689ee8062e4e7276, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 4294967295
+      value: 63
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8516,6 +8516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88bc28a419e0d534fa8f7aa9d1559e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _wallImages: 11
   _lobbyPanel: {fileID: 1620424832}
   _experiencePanel: {fileID: 974502192}
   _webData: {fileID: 1219884211}
@@ -8625,7 +8626,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5793db3393e6c4da5d244877c76aaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _wallImages: 11
 --- !u!4 &1410318624
 Transform:
   m_ObjectHideFlags: 0
@@ -13976,6 +13976,10 @@ PrefabInstance:
       value: ImageHandler
       objectReference: {fileID: 0}
     - target: {fileID: 3582934023900027964, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3766668640931896655, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}

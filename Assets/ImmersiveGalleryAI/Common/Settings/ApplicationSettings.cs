@@ -19,6 +19,8 @@ namespace ImmersiveGalleryAI.Common.Settings
         [Inject] private IAudioSystem _audioSystem;
         [Inject] private IImageDataManager _imageDataManager;
 
+        private bool _wasCreditsInit;
+        
         private void Start()
         {
             InitSettings();
@@ -28,11 +30,13 @@ namespace ImmersiveGalleryAI.Common.Settings
         private void OnEnable()
         {
             _credits.RequestUpgradeBalanceEvent += RequestCreditUpgradeEventHandler;
+            _credits.UpdateBalanceEvent += UpdateCreditsBalanceEventHandler;
         }
 
         private void OnDisable()
         {
             _credits.RequestUpgradeBalanceEvent -= RequestCreditUpgradeEventHandler;
+            _credits.UpdateBalanceEvent -= UpdateCreditsBalanceEventHandler;
         }
 
         private async void InitSettings()
@@ -115,6 +119,18 @@ namespace ImmersiveGalleryAI.Common.Settings
         private void RequestCreditUpgradeEventHandler()
         {
             _backend.SendRequestEmailFrom(_user.GetUserEmail());
+        }
+        
+        private void UpdateCreditsBalanceEventHandler(int creditsLeft)
+        {
+            // to prevent first call when SetCredits() invokes.
+            if (!_wasCreditsInit)
+            {
+                _wasCreditsInit = true;
+                return;
+            }
+
+            _backend.UpdateCreditsBalance(creditsLeft);
         }
 
         private void SetCredits()

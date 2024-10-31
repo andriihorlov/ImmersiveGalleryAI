@@ -20,5 +20,6 @@ namespace ImmersiveGalleryAI.Common.Backend
         UniTask<SettingsData> GetApplicationSettings();
         UniTask<UserModel> GetUserModel(string userName);
         void SendRequestEmailFrom(string userEmail);
+        void UpdateCreditsBalance(int credits);
     }
 }
