@@ -7,7 +7,7 @@ namespace ImmersiveGalleryAI.Common.Backend
 {
     public interface IBackend
     {
-        void SetWallImagesCount(int imageCount, int defaultImagesLeft);
+        void SetWallImagesCount(int wallImageCount);
 
         Task<bool> Registration(string login, string email, string password);
         UniTask<bool> Login(string login, string password);
@@ -19,5 +19,6 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         UniTask<SettingsData> GetApplicationSettings();
         UniTask<UserModel> GetUserModel(string userName);
+        void SendRequestEmailFrom(string userEmail);
     }
 }

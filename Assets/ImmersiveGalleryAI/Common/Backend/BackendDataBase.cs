@@ -18,7 +18,7 @@ namespace ImmersiveGalleryAI.Common.Backend
         private const string DataBaseLoginName = "login";
         private const string DataBaseEmailName = "email";
         private const string DataBaseImageLeftName = "imagesLeft";
-        
+
         private const string DataBaseImageSettings = "imageSettings";
         private const string DataBaseImageWallId = "wallId";
         private const string DataBaseImageDescription = "description";
@@ -28,14 +28,19 @@ namespace ImmersiveGalleryAI.Common.Backend
         private const string DefaultApiKey = "DefaultApi";
         private const string FreeImageCountKey = "FreeImageCount";
         private const string IsTestCountKey = "IsTest";
+        private const string SenderEmailLogin = "SenderEmailLogin";
+        private const string SenderEmailPassword = "SenderEmailPassword";
+        private const string SenderEmailProvider = "SenderEmailProvider";
 
         private int _wallImageCount;
-        
+        private SettingsData _settingsData;
+
         private DatabaseReference _firebaseGetDatabaseReference;
         private DatabaseReference FirebaseGetDataBaseReference => _firebaseGetDatabaseReference ??= FirebaseDatabase.DefaultInstance.RootReference.Child(DataBaseUsers);
 
         public void SetWallImageCount(int imagesCount)
         {
+            Debug.Log($"Set wall image count");
             _wallImageCount = imagesCount;
         }
 
@@ -45,18 +50,14 @@ namespace ImmersiveGalleryAI.Common.Backend
             {
                 login = login,
                 email = email,
-                imageSettings = new ImageSetting[_wallImageCount],
-                imagesLeft = defaultImagesLeft
+                imagesLeft = defaultImagesLeft,
             };
 
-            await FirebaseGetDataBaseReference.Child(login).SetRawJsonValueAsync(JsonUtility.ToJson(userModel))
+            await FirebaseGetDataBaseReference.Child(login.ToLower()).SetRawJsonValueAsync(JsonUtility.ToJson(userModel))
                 .ContinueWithOnMainThread(task => { Logger.WriteTask(task, "Add data to DB"); });
         }
 
-        public async UniTask<bool> IsLoginExist(string login)
-        {
-            return await GetUser(login) != null;
-        }
+        public async UniTask<bool> IsLoginExist(string login) => await GetUser(login) != null;
 
         public async UniTask<SettingsData> GetApplicationSettings()
         {
@@ -88,9 +89,18 @@ namespace ImmersiveGalleryAI.Common.Backend
                                 break;
                             case FreeImageCountKey:
                                 settingsData.FreeImageCount = int.Parse(snapshot.Value.ToString());
-                                break;   
+                                break;
                             case IsTestCountKey:
                                 settingsData.IsTest = bool.Parse(snapshot.Value.ToString());
+                                break;
+                            case SenderEmailLogin:
+                                settingsData.SenderEmailLogin = snapshot.Value.ToString();
+                                break;
+                            case SenderEmailPassword:
+                                settingsData.SenderEmailPassword = snapshot.Value.ToString();
+                                break;
+                            case SenderEmailProvider:
+                                settingsData.SenderEmailProvider = snapshot.Value.ToString();
                                 break;
                         }
                     }
@@ -111,54 +121,7 @@ namespace ImmersiveGalleryAI.Common.Backend
 
             return userEmail;
         }
-
-        private async UniTask<DataSnapshot> GetUser(string login)
-        {
-            DataSnapshot targetUserSnapshot = null;
-            Task jsonAsync = FirebaseGetDataBaseReference.GetValueAsync().ContinueWith(dataSnapshot =>
-            {
-                if (!dataSnapshot.IsCompletedSuccessfully)
-                {
-                    return;
-                }
-
-                IEnumerable<DataSnapshot> resultChildren = dataSnapshot.Result.Children;
-                Debug.Log($"Children count: {dataSnapshot.Result.ChildrenCount}");
-
-                foreach (DataSnapshot snapshot in resultChildren)
-                {
-                    string snapshotLogin = GetSnapshotFieldString(snapshot, DataBaseLoginName);
-
-                    if (!String.Equals(snapshotLogin, login, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    targetUserSnapshot = snapshot;
-                    break;
-                }
-            });
-
-            await jsonAsync;
-            return targetUserSnapshot;
-        }
-
-        private string GetSnapshotFieldString(DataSnapshot dataSnapshot, string targetChild)
-        {
-            return dataSnapshot?.Child(targetChild).Value.ToString();
-        }
-
-        private int GetSnapshotFieldInt(DataSnapshot dataSnapshot, string targetChild)
-        {
-            bool isParsed = int.TryParse(dataSnapshot?.Child(targetChild).Value.ToString(), out int result);
-            if (!isParsed)
-            {
-                Debug.LogError($"Can't parse to INT -> {targetChild}");
-            }
-
-            return result;
-        }
-
+        
         public async UniTask<UserModel> GetUserModel(string userName)
         {
             DataSnapshot user = await GetUser(userName);
@@ -174,23 +137,26 @@ namespace ImmersiveGalleryAI.Common.Backend
                 email = GetSnapshotFieldString(user, DataBaseEmailName),
             };
 
-            List<ImageSetting> imageSettings = new List<ImageSetting>(); 
-            
+            List<ImageSetting> imageSettings = new List<ImageSetting>();
+
             foreach (DataSnapshot imageSnapshot in user.Child(DataBaseImageSettings).Children)
             {
+                Debug.Log($"Data snapshot: {imageSnapshot.Key}");
+
                 ImageSetting imageSetting = new ImageSetting()
                 {
                     wallId = GetSnapshotFieldInt(imageSnapshot, DataBaseImageWallId),
                     description = GetSnapshotFieldString(imageSnapshot, DataBaseImageDescription),
-                    imagePath = GetSnapshotFieldString(imageSnapshot, DataBaseImageImagePath)
+                    imagePath = GetSnapshotFieldString(imageSnapshot, DataBaseImageImagePath),
                 };
+
                 imageSettings.Add(imageSetting);
             }
 
             userModel.imageSettings = imageSettings.ToArray();
             return userModel;
         }
-        
+
         public async Task UploadImageData(ImageData imageData, string currentUserLogin, string dataBasePath)
         {
             UserModel userModel = await GetUserModel(currentUserLogin);
@@ -206,8 +172,64 @@ namespace ImmersiveGalleryAI.Common.Backend
                 break;
             }
 
-            await FirebaseGetDataBaseReference.Child(currentUserLogin).Child(DataBaseImageSettings).Child(imageData.WallId.ToString()).SetRawJsonValueAsync(JsonUtility.ToJson(userModel))
+            ImageSetting imageSetting = new ImageSetting()
+            {
+                description = imageData.Description,
+                imagePath = dataBasePath,
+                wallId = imageData.WallId
+            };
+
+            await FirebaseGetDataBaseReference.Child(currentUserLogin.ToLower()).Child(DataBaseImageSettings).Child(imageData.WallId.ToString())
+                .SetRawJsonValueAsync(JsonUtility.ToJson(imageSetting))
                 .ContinueWithOnMainThread(task => { Logger.WriteTask(task, "Add data to DB"); });
+        }
+
+        private async UniTask<DataSnapshot> GetUser(string login)
+        {
+            DataSnapshot targetUserSnapshot = null;
+            Task jsonAsync = FirebaseGetDataBaseReference.GetValueAsync().ContinueWith(dataSnapshot =>
+            {
+                if (!dataSnapshot.IsCompletedSuccessfully)
+                {
+                    return;
+                }
+
+                IEnumerable<DataSnapshot> resultChildren = dataSnapshot.Result.Children;
+
+                foreach (DataSnapshot snapshot in resultChildren)
+                {
+                    string snapshotLogin = GetSnapshotFieldString(snapshot, DataBaseLoginName);
+
+                    if (!IsLoginEqualWithoutCase(snapshotLogin, login))
+                    {
+                        continue;
+                    }
+
+                    targetUserSnapshot = snapshot;
+                    break;
+                }
+            });
+
+            await jsonAsync;
+            return targetUserSnapshot;
+        }
+
+        private bool IsLoginEqualWithoutCase(string snapshotLogin, string currentLogin) => string.Equals(snapshotLogin.ToLower(), currentLogin.ToLower());
+
+        private string GetSnapshotFieldString(DataSnapshot dataSnapshot, string targetChild)
+        {
+            return dataSnapshot?.Child(targetChild) == null ? null : dataSnapshot?.Child(targetChild).Value.ToString();
+        }
+
+        private int GetSnapshotFieldInt(DataSnapshot dataSnapshot, string targetChild)
+        {
+            bool isParsed = int.TryParse(dataSnapshot?.Child(targetChild).Value.ToString(), out int result);
+            if (!isParsed)
+            {
+                Debug.LogError($"Can't parse to INT -> {targetChild}");
+            }
+
+            return result;
         }
     }
 }
