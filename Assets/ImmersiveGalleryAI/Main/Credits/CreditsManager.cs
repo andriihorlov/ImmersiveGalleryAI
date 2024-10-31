@@ -5,7 +5,7 @@ namespace ImmersiveGalleryAI.Main.Credits
     public class CreditsManager : ICredits
     {
         public event Action<int> UpdateBalanceEvent;
-        public event Action UpgradeBalanceEvent;
+        public event Action RequestUpgradeBalanceEvent;
         public event Action NoCreditsLeftEvent;
 
         private int _creditsBalance;
@@ -21,6 +21,7 @@ namespace ImmersiveGalleryAI.Main.Credits
         public void SetCreditsBalance(int credits)
         {
             _creditsBalance = credits;
+            UpdateBalanceEvent?.Invoke(_creditsBalance);
         }
 
         public void SpendCredit()
@@ -34,9 +35,9 @@ namespace ImmersiveGalleryAI.Main.Credits
             }
         }
 
-        public void UpgradeBalance()
+        public void RequestUpgradeBalance()
         {
-            UpgradeBalanceEvent?.Invoke();
+            RequestUpgradeBalanceEvent?.Invoke();
         }
     }
 }
