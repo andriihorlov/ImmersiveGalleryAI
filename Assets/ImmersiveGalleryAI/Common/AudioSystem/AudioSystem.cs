@@ -56,7 +56,10 @@ namespace ImmersiveGalleryAI.Common.AudioSystem
 
         private void ChangeAudioSourceLocation()
         {
-            _sfxAudioSource.transform.position = _playerLocation.CameraRigTransform.position;
+            if (_playerLocation.CameraRigTransform != null)
+            {
+                _sfxAudioSource.transform.position = _playerLocation.CameraRigTransform.position;
+            }
         }
     }
 }
