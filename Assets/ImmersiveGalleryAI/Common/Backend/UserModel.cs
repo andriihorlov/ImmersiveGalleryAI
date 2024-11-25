@@ -13,6 +13,9 @@ namespace ImmersiveGalleryAI.Common.Backend
     {
         public string login;
         public string email;
+        public string customApi;
+        public int aiImageSize;
+        public int aiModelNumber; 
         public int imagesLeft;
         public ImageSetting[] imageSettings;
     }

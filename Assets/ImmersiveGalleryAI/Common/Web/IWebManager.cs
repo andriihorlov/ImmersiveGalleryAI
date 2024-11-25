@@ -7,6 +7,6 @@ namespace ImmersiveGalleryAI.Common.Web
     {
         string ErrorMessage { get; }
         Task<Texture2D> GenerateImageEventHandler(string text);
-        void Init(Texture2D [] randomSprites, bool isAi, string api);
+        void Init(Texture2D [] randomSprites, bool isAi, OpenAiSettings settings);
     }
 }

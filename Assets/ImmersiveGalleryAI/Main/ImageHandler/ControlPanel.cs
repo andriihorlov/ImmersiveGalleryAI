@@ -36,6 +36,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         [SerializeField] private Button _cancelButton;
         [SerializeField] private Button _saveButton;
         [SerializeField] private Button _regenerateButton;
+        [SerializeField] private CanvasGroup _canvasGroup;
 
         private Transform _currentTransform;
         private bool _isMicEnabled;
@@ -75,7 +76,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         {
             _inputField.text = previousText;
         }
-        
+
         public void ToggleButtons(bool isActive)
         {
             _generateButton.enabled = isActive;
@@ -89,6 +90,8 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
 
         public void SetActive(bool isActive, bool isImmediate = false)
         {
+            DOTween.Kill(_currentTransform);
+            SetActiveCanvas(isActive, isImmediate);
             float posY = isActive ? DefaultPoseY : HiddenPoseY;
             Vector3 position = Vector3.zero;
             position.y = posY;
@@ -114,13 +117,40 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
                     {
                         _currentTransform.gameObject.SetActive(false);
                     }
-                });
+                })
+                .SetId(_currentTransform);
         }
 
         public void SetRegenerateButtons(bool isActive)
         {
             _generatedButtons.SetActive(isActive);
             _generateButton.gameObject.SetActive(!isActive);
+        }
+
+        private void SetActiveCanvas(bool isActive, bool isImmediate)
+        {
+            DOTween.Kill(_canvasGroup);
+            if (isImmediate)
+            {
+                _canvasGroup.gameObject.SetActive(isActive);
+                _canvasGroup.alpha = isActive ? 1f : 0f;
+                return;
+            }
+            
+            if (isActive)
+            {
+                _canvasGroup.gameObject.SetActive(true);
+            }
+
+            _canvasGroup.DOFade(isActive ? 1f : 0f, isActive ? ShowAnimationDuration : HideAnimationDuration)
+                .OnComplete(() =>
+                {
+                    if (!isActive)
+                    {
+                        _canvasGroup.gameObject.SetActive(false);
+                    }
+                })
+                .SetId(_canvasGroup);
         }
 
         private void GenerateImageEventHandler()

@@ -27,11 +27,6 @@ namespace ImmersiveGalleryAI.Common.Backend
             _backendStorage = new BackendStorage();
         }
 
-        public void SetWallImagesCount(int wallImageCount)
-        {
-            _backendDataBase.SetWallImageCount(wallImageCount);
-        }
-
         public async Task<bool> Registration(string login, string email, string password)
         {
             bool isPossibleContinue = await IsLoginExist(login);

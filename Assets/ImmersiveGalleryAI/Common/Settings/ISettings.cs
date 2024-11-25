@@ -10,5 +10,7 @@ namespace ImmersiveGalleryAI.Common.Settings
         bool GetIsAiUse();
         string GetAdminEmail();
         int GetDefaultImageCount();
+        int GetAiImageSize();
+        int GetAiModel();
     }
 }

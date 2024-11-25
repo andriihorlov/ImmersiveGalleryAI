@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,7 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
         [SerializeField] private Button _editButton;
         [SerializeField] private Button _saveButton;
         [SerializeField] private Button _deleteButton;
-
+        
         public event Action EditButtonEvent;
         public event Action SaveButtonEvent;
         public event Action DeleteButtonEvent;

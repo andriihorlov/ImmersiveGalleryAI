@@ -1,4 +1,5 @@
-﻿using ImmersiveGalleryAI.Common.AudioSystem;
+﻿using DG.Tweening;
+using ImmersiveGalleryAI.Common.AudioSystem;
 using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.Experience;
 using ImmersiveGalleryAI.Common.Keyboard;
@@ -81,9 +82,15 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _recoveryPanel.InputFieldSelectedEvent -= RecoveryPanelInputFieldEventHandler;
         }
 
-        public void SetActive(bool isActive)
+        public void Hide()
         {
-            gameObject.SetActive(isActive);
+            Sequence sequence = DOTween.Sequence();
+            float hideDuration = 0.75f;
+            sequence
+                .Append(_loginPanel.SetActive(false, hideDuration))
+                .Append(_registrationPanel.SetActive(false, hideDuration))
+                .Append(_recoveryPanel.SetActive(false, hideDuration))
+                .OnComplete(() => gameObject.SetActive(false));
         }
 
         private void InitUserName()

@@ -458,6 +458,7 @@ MonoBehaviour:
   _cancelButton: {fileID: 2493277837269541777}
   _saveButton: {fileID: 1096014485651565994}
   _regenerateButton: {fileID: 1804510142315702544}
+  _canvasGroup: {fileID: 6902499115984334486}
 --- !u!1 &1250748979396101637
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,6 +559,7 @@ GameObject:
   - component: {fileID: 5575754056824685707}
   - component: {fileID: 2038452081469622400}
   - component: {fileID: 9131414944125663709}
+  - component: {fileID: 6902499115984334486}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -645,6 +647,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RaycastTriggerInteraction: 1
+--- !u!225 &6902499115984334486
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360719941025870416}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1450403461503074981
 GameObject:
   m_ObjectHideFlags: 0
@@ -1956,7 +1970,6 @@ GameObject:
   - component: {fileID: 9114891545812808824}
   - component: {fileID: 4848734313947424963}
   - component: {fileID: 4757662408313911091}
-  - component: {fileID: 960576851590806147}
   - component: {fileID: 6061302550547486993}
   m_Layer: 5
   m_Name: Canvas
@@ -2025,18 +2038,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!225 &960576851590806147
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4382487419415044078}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!114 &6061302550547486993
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2371,7 +2372,7 @@ GameObject:
   - component: {fileID: 7267634393055254700}
   - component: {fileID: 6901753207550826725}
   - component: {fileID: 1396327110237522469}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: MainCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}

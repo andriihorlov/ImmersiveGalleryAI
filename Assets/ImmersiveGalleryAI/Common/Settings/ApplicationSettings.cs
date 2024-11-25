@@ -10,6 +10,12 @@ using Zenject;
 
 namespace ImmersiveGalleryAI.Common.Settings
 {
+    
+    /// <summary>
+    /// Currently the Settings not always keep the default values.
+    /// Instead, when user logged in, those values overriden
+    /// In the future, in case of log out possibility - add the separate settings handler 
+    /// </summary>
     public class ApplicationSettings : MonoBehaviour
     {
         [Inject] private IBackend _backend;

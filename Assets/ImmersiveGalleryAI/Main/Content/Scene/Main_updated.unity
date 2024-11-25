@@ -4539,7 +4539,7 @@ MonoBehaviour:
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
@@ -9024,8 +9024,8 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
@@ -13919,6 +13919,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 974502190}
     m_Modifications:
+    - target: {fileID: 1250748979396101637, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1360719941025870416, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -13979,11 +13983,19 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3703402599877830305, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3766668640931896655, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6367610806984283367, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6374056416862976044, guid: 6b6366da0a846c24aab0cedae2bd22ef, type: 3}
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
