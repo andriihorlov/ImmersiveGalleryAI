@@ -2,7 +2,6 @@
 using Cysharp.Threading.Tasks;
 using ImmersiveGalleryAI.Main.ImageData;
 using UnityEngine;
-using UnityEngine.Playables;
 using Logger = ImmersiveGalleryAI.Common.Utilities.Logger;
 using SettingsData = ImmersiveGalleryAI.Common.Settings.SettingsData;
 
@@ -16,18 +15,16 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         private int _defaultImageLeft;
         private string _currentUserLogin;
+        private SettingsData _settingsData;
+        private EmailSender _emailSender;
+
+        private bool _wasUpgradeRequestSent;
 
         public BackendManager()
         {
             _backendAuth = new BackendAuth();
             _backendDataBase = new BackendDataBase();
             _backendStorage = new BackendStorage();
-        }
-
-        public void SetWallImagesCount(int imageCount, int defaultImagesLeft)
-        {
-            _backendDataBase.SetWallImageCount(imageCount);
-            _defaultImageLeft = defaultImagesLeft;
         }
 
         public async Task<bool> Registration(string login, string email, string password)
@@ -43,10 +40,12 @@ namespace ImmersiveGalleryAI.Common.Backend
             bool isRegistrationSucceed = await _backendAuth.Registration(email, password);
             if (isRegistrationSucceed)
             {
+                Debug.Log($"DEFAULT IMAGE LEFT : {_defaultImageLeft}");
                 await _backendDataBase.AddToDatabase(login, email, _defaultImageLeft);
                 _currentUserLogin = login;
             }
 
+            Debug.Log($"Registrationg success.");
             return isRegistrationSucceed;
         }
 
@@ -57,7 +56,9 @@ namespace ImmersiveGalleryAI.Common.Backend
             {
                 _backendStorage.Init(login);
                 _currentUserLogin = login;
+                _wasUpgradeRequestSent = false;
             }
+            
             return isLogged;
         }
 
@@ -80,7 +81,12 @@ namespace ImmersiveGalleryAI.Common.Backend
 
         public async UniTask<SettingsData> GetApplicationSettings()
         {
-            return await _backendDataBase.GetApplicationSettings();
+            _settingsData = await _backendDataBase.GetApplicationSettings();
+            _defaultImageLeft = _settingsData.FreeImageCount;
+            _emailSender = new EmailSender(_settingsData.SenderEmailLogin, _settingsData.SenderEmailPassword, _settingsData.SenderEmailProvider);
+         
+            Debug.Log($"Get application settings.");
+            return _settingsData;
         }
 
         public async UniTask<UserModel> GetUserModel(string userName)
@@ -88,11 +94,28 @@ namespace ImmersiveGalleryAI.Common.Backend
             return await _backendDataBase.GetUserModel(userName);
         }
 
+        public void SendRequestEmailFrom(string userEmail)
+        {
+            if (_wasUpgradeRequestSent)
+            {
+                return;
+            }
+
+            _emailSender.SendEmail(userEmail, _currentUserLogin, _settingsData.AdminEmail);
+            _wasUpgradeRequestSent = true;
+        }
+
+        public void UpdateCreditsBalance(int creditsBalance)
+        {
+            _backendDataBase.UpdateCreditsBalance(_currentUserLogin, creditsBalance);
+        }
+
         public async UniTask GuestEnter()
         {
             string deviceId = SystemInfo.deviceUniqueIdentifier;
             string guestLogin = "Guest" + deviceId;
             bool isDeviceIdExist = await _backendDataBase.IsLoginExist(guestLogin);
+            _wasUpgradeRequestSent = false;
 
             if (isDeviceIdExist)
             {

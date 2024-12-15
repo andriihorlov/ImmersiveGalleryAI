@@ -16,6 +16,7 @@ namespace ImmersiveGalleryAI.Common.Settings
         public bool GetIsAiUse() => !_settingsData.IsTest;
         public string GetAdminEmail() => _settingsData.AdminEmail;
         public int GetDefaultImageCount() => _settingsData?.FreeImageCount ?? -1;
-        
+        public int GetAiImageSize() => _settingsData.DefaultImageSize;
+        public int GetAiModel() => _settingsData.DefaultImageModel;
     }
 }

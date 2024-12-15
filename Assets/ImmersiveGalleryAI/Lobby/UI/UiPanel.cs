@@ -7,17 +7,21 @@ namespace ImmersiveGalleryAI.Lobby.UI
     {
         [SerializeField] private CanvasGroup _canvasGroup;
 
-        public void SetActive(bool isActive)
+        public Tween SetActive(bool isActive, float duration = -1)
         {
             float targetFade = isActive ? 1f : 0f;
-            float fadeDuration = isActive ? 1.5f : 0.5f;
+            float fadeDuration = duration;
+            if (fadeDuration < 0)
+            {
+                fadeDuration = isActive ? 1.5f : 0.5f;
+            }
 
             if (isActive)
             {
                 _canvasGroup.gameObject.SetActive(true);
             }
 
-            _canvasGroup.DOFade(targetFade, fadeDuration).OnComplete(() =>
+            return _canvasGroup.DOFade(targetFade, fadeDuration).OnComplete(() =>
             {
                 if (!isActive)
                 {

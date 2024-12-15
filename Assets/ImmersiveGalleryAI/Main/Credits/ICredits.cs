@@ -7,13 +7,13 @@ namespace ImmersiveGalleryAI.Main.Credits
         bool IsOwnCredits { get; }
         
         event Action<int> UpdateBalanceEvent;
-        event Action UpgradeBalanceEvent;
+        event Action RequestUpgradeBalanceEvent;
         event Action NoCreditsLeftEvent;
 
         void SetCreditType(bool isOwn);
         int GetCreditsBalance();
         void SetCreditsBalance(int credits);
         void SpendCredit();
-        void UpgradeBalance();
+        void RequestUpgradeBalance();
     }
 }

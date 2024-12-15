@@ -1,3 +1,6 @@
+using System;
+using ImmersiveGalleryAI.Common.Backend;
+using ImmersiveGalleryAI.Common.Settings;
 using ImmersiveGalleryAI.Lobby.UI;
 using ImmersiveGalleryAI.Main;
 using UnityEngine;
@@ -7,27 +10,49 @@ namespace ImmersiveGalleryAI.Common.Experience
 {
     public class ExperienceController : MonoBehaviour
     {
-        [SerializeField] private LobbyUi _lobbyPanel;
+        [Tooltip("Count of image places")]
+        [SerializeField]
+        public int _wallImages = 11;
+
+        [Space] [SerializeField] private LobbyUi _lobbyPanel;
         [SerializeField] private ImagesController _experiencePanel;
 
         [Space] [SerializeField] private GameObject _webData;
         [SerializeField] private GameObject _applicationSettings;
         [SerializeField] private GameObject _teleportationArea;
-        
+
         [Inject] private IExperienceManager _experienceManager;
+        [Inject] private IBackend _backend;
+        [Inject] private ISettings _settings;
 
         private void Awake()
         {
-            _lobbyPanel.SetActive(true);
+            _lobbyPanel.gameObject.SetActive(true);
             _webData.SetActive(false);
             _applicationSettings.SetActive(false);
             _experiencePanel.SetActive(false);
             _teleportationArea.SetActive(false);
         }
 
+        private void Start()
+        {
+            InitSettings();
+        }
+
+        private async void InitSettings()
+        {
+            SettingsData settingsData = await _backend.GetApplicationSettings();
+            _settings.SetSettings(settingsData);
+        }
+
         private void OnEnable()
         {
             _experienceManager.LoginSuccessEvent += LoginSuccessEventHandler;
+        }
+
+        private void OnDisable()
+        {
+            _experienceManager.LoginSuccessEvent -= LoginSuccessEventHandler;
         }
 
         private void LoginSuccessEventHandler(ExperiencePhase experiencePhase)
@@ -36,10 +61,10 @@ namespace ImmersiveGalleryAI.Common.Experience
             {
                 return;
             }
-            
+
             _webData.SetActive(true);
             _applicationSettings.SetActive(true);
-            _lobbyPanel.SetActive(false);
+            _lobbyPanel.Hide();
             _experiencePanel.SetActive(true);
             _teleportationArea.SetActive(true);
         }

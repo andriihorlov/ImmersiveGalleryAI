@@ -22,7 +22,16 @@ namespace ImmersiveGalleryAI.Common.Web
                 isAi = false;
             }
 
-            _webManager.Init(_randomTextures, isAi, _settings.GetCurrentApi());
+            OpenAiSettings openAiSettings = new OpenAiSettings()
+            {
+                Api = _settings.GetCurrentApi(),
+                ImageSize = _settings.GetAiImageSize(),
+                Model = _settings.GetAiModel()
+            };
+            
+            Debug.Log($"Init ai settings: Model: {openAiSettings.Model}. Size: {openAiSettings.ImageSize}");
+            
+            _webManager.Init(_randomTextures, isAi, openAiSettings);
         }
     }
 }

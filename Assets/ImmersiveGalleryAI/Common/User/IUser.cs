@@ -7,6 +7,7 @@ namespace ImmersiveGalleryAI.Common.User
         bool IsGuest { get; set; }
         void SetUserData(UserModel userModel);
         string GetCurrentUserLogin();
+        string GetUserEmail();
         int GetUserCredits();
         ImageSetting[] GetImageSettings();
     }

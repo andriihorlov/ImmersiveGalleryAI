@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using DG.Tweening;
 using ImmersiveGalleryAI.Common.AudioSystem;
 using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.Experience;
@@ -48,24 +48,6 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _lobbyWalls.SetActive(true);
         }
 
-        private void InitUserName()
-        {
-            string playerName = PlayerPrefs.GetString(PlayerNamePrefs);
-            if (string.IsNullOrEmpty(playerName))
-            {
-                return;
-            }
-
-            string password = PlayerPrefs.GetString(PlayerPasswordPrefs);
-            if (string.IsNullOrEmpty(password))
-            {
-                Debug.LogError($"Can't find saved password.");
-                return;
-            }
-
-            _loginPanel.InitPlayerName(playerName, password);
-        }
-
         private void OnEnable()
         {
             _loginPanel.RegistrationClickedEvent += RegistrationLoginClickEventHandler;
@@ -100,11 +82,35 @@ namespace ImmersiveGalleryAI.Lobby.UI
             _recoveryPanel.InputFieldSelectedEvent -= RecoveryPanelInputFieldEventHandler;
         }
 
-        public void SetActive(bool isActive)
+        public void Hide()
         {
-            gameObject.SetActive(isActive);
+            Sequence sequence = DOTween.Sequence();
+            float hideDuration = 0.75f;
+            sequence
+                .Append(_loginPanel.SetActive(false, hideDuration))
+                .Append(_registrationPanel.SetActive(false, hideDuration))
+                .Append(_recoveryPanel.SetActive(false, hideDuration))
+                .OnComplete(() => gameObject.SetActive(false));
         }
 
+        private void InitUserName()
+        {
+            string playerName = PlayerPrefs.GetString(PlayerNamePrefs);
+            if (string.IsNullOrEmpty(playerName))
+            {
+                return;
+            }
+
+            string password = PlayerPrefs.GetString(PlayerPasswordPrefs);
+            if (string.IsNullOrEmpty(password))
+            {
+                Debug.LogError($"Can't find saved password.");
+                return;
+            }
+
+            _loginPanel.InitPlayerName(playerName, password);
+        }
+        
         private void RegistrationLoginClickEventHandler()
         {
             PlayClickSfx();
@@ -214,7 +220,7 @@ namespace ImmersiveGalleryAI.Lobby.UI
         private async void TryLoggedIn(string login, string password)
         {
             login = login.ToLower();
-            
+
             bool isLoggedSucceed = await _backend.Login(login, password);
             if (!isLoggedSucceed)
             {
@@ -237,11 +243,5 @@ namespace ImmersiveGalleryAI.Lobby.UI
         }
 
         private void PlayClickSfx() => _audioSystem.PlayClickSfx();
-        
-        [ContextMenu("Check database")]
-        private void CheckDatabase()
-        {
-            _backend.GetApplicationSettings();
-        }
     }
 }

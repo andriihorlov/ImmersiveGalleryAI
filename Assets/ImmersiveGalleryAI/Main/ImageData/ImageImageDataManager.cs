@@ -7,12 +7,13 @@ namespace ImmersiveGalleryAI.Main.ImageData
 {
     public class ImageImageDataManager : IImageDataManager
     {
+        private IImageDataManager _imageDataManagerImplementation;
         public event Action UpdatePreviousImagesEvent;
         public AllImages Settings { get; private set; }
 
-        public void SaveSettings()
+        public void SaveSettings(string owner)
         {
-            FileManager.SaveImages(Settings);
+            FileManager.SaveImages(Settings, owner);
         }
 
         public void DeleteImage(ImageData imageData)
@@ -28,7 +29,7 @@ namespace ImmersiveGalleryAI.Main.ImageData
 
         public void SaveImage(ImageData imageData)
         {
-            ImageData newImageData = FileManager.SaveNewImage(imageData);
+            ImageData newImageData = FileManager.SaveNewImage(imageData, Settings.Owner);
             AddImageInSettings(newImageData);
         }
 
@@ -46,9 +47,10 @@ namespace ImmersiveGalleryAI.Main.ImageData
             UpdatePreviousImagesEvent?.Invoke();
         }
 
-        public void LoadSettings()
+        public void LoadSettings(string owner)
         {
-            Settings = FileManager.LoadAllImages();
+            Settings = FileManager.LoadAllImages(owner);
+            Settings.Owner = owner;
         }
 
         private void AddImageInSettings(ImageData imageData)

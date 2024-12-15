@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using ImmersiveGalleryAI.Common.AudioSystem;
 using ImmersiveGalleryAI.Common.Backend;
 using ImmersiveGalleryAI.Common.User;
@@ -13,12 +10,14 @@ using Zenject;
 
 namespace ImmersiveGalleryAI.Common.Settings
 {
+    
+    /// <summary>
+    /// Currently the Settings not always keep the default values.
+    /// Instead, when user logged in, those values overriden
+    /// In the future, in case of log out possibility - add the separate settings handler 
+    /// </summary>
     public class ApplicationSettings : MonoBehaviour
     {
-        [Tooltip("Count of image places")]
-        [SerializeField]
-        public int _wallImages = 11;
-
         [Inject] private IBackend _backend;
         [Inject] private ISettings _settings;
         [Inject] private ICredits _credits;
@@ -26,18 +25,28 @@ namespace ImmersiveGalleryAI.Common.Settings
         [Inject] private IAudioSystem _audioSystem;
         [Inject] private IImageDataManager _imageDataManager;
 
+        private bool _wasCreditsInit;
+        
         private void Start()
         {
             InitSettings();
             _audioSystem.PlayMusic();
         }
 
+        private void OnEnable()
+        {
+            _credits.RequestUpgradeBalanceEvent += RequestCreditUpgradeEventHandler;
+            _credits.UpdateBalanceEvent += UpdateCreditsBalanceEventHandler;
+        }
+
+        private void OnDisable()
+        {
+            _credits.RequestUpgradeBalanceEvent -= RequestCreditUpgradeEventHandler;
+            _credits.UpdateBalanceEvent -= UpdateCreditsBalanceEventHandler;
+        }
+
         private async void InitSettings()
         {
-            UniTask<SettingsData> settings = _backend.GetApplicationSettings();
-            SettingsData settingsData = await settings;
-            _settings.SetSettings(settingsData);
-
             await FillImagesFromBackend();
             _imageDataManager.UpdatePreviousImages();
 
@@ -46,7 +55,6 @@ namespace ImmersiveGalleryAI.Common.Settings
             {
                 Debug.Log($"Local AI settings not exist");
                 SetCredits();
-                _backend.SetWallImagesCount(_wallImages, _user.GetUserCredits());
                 _credits.SetCreditType(isOwn: false);
                 return;
             }
@@ -59,7 +67,7 @@ namespace ImmersiveGalleryAI.Common.Settings
         private async Task FillImagesFromBackend()
         {
             ImageSetting[] backendImages = _user.GetImageSettings();
-            _imageDataManager.LoadSettings();
+            _imageDataManager.LoadSettings(_user.GetCurrentUserLogin());
             AllImages localImages = _imageDataManager.Settings;
 
             foreach (ImageSetting backendImage in backendImages)
@@ -85,8 +93,7 @@ namespace ImmersiveGalleryAI.Common.Settings
                 {
                     continue;
                 }
-
-                Debug.Log($"Local: {backendImage.wallId} ({backendImage.description})");
+                
                 await DownloadAndSaveImage(backendImage);
             }
             
@@ -115,12 +122,26 @@ namespace ImmersiveGalleryAI.Common.Settings
             };
         }
 
-        private void SetCredits() => _credits.SetCreditsBalance(_user.GetUserCredits());
-
-        [ContextMenu("GetUser login")]
-        private void GetUserLogin()
+        private void RequestCreditUpgradeEventHandler()
         {
-            Debug.Log($"Login: {_user.GetCurrentUserLogin()}");
+            _backend.SendRequestEmailFrom(_user.GetUserEmail());
+        }
+        
+        private void UpdateCreditsBalanceEventHandler(int creditsLeft)
+        {
+            // to prevent first call when SetCredits() invokes.
+            if (!_wasCreditsInit)
+            {
+                _wasCreditsInit = true;
+                return;
+            }
+
+            _backend.UpdateCreditsBalance(creditsLeft);
+        }
+
+        private void SetCredits()
+        {
+            _credits.SetCreditsBalance(_user.GetUserCredits());
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using OpenAI;
 using UnityEngine;
@@ -5,11 +6,20 @@ using UnityEngine.Networking;
 
 namespace ImmersiveGalleryAI.Common.Web
 {
+    [Serializable]
+    public class OpenAiSettings
+    {
+        public string Api;
+        public int ImageSize;
+        public int Model;
+    }
+    
     public class WebManager : IWebManager
     {
         private const int DelayForRandomImage = 2000;
         private OpenAIApi _openAi = new OpenAIApi();
-        
+
+        private OpenAiSettings _openAiSettings;
         private Texture2D[] _randomSprites;
         private bool _isAi = false;
         
@@ -37,11 +47,13 @@ namespace ImmersiveGalleryAI.Common.Web
             return resultedSprite;
         }
 
-        public void Init(Texture2D[] randomSprites, bool isAi, string api)
+        public void Init(Texture2D[] randomSprites, bool isAi, OpenAiSettings settings)
         {
             _randomSprites = randomSprites;
             _isAi = isAi;
-            _openAi = new OpenAIApi(api);
+
+            _openAiSettings = settings;
+            _openAi = new OpenAIApi(_openAiSettings.Api);
         }
 
         private Texture2D GetNextImage() => _randomSprites[_randomIndex];
@@ -64,7 +76,8 @@ namespace ImmersiveGalleryAI.Common.Web
             CreateImageResponse response = await _openAi.CreateImage(new CreateImageRequest
             {
                 Prompt = text,
-                Size = ImageSize.Size256
+                Size = GetImageSize(),
+                N = _openAiSettings.Model,
             });
             
             Texture2D createdTexture = null;
@@ -93,7 +106,9 @@ namespace ImmersiveGalleryAI.Common.Web
         
             return createdTexture;
         }
-        
+
+        private string GetImageSize() => _openAiSettings.ImageSize + "x" + _openAiSettings.ImageSize;
+
         private Texture2D CreateTexture(byte[] imageData)
         {
             Texture2D texture = new Texture2D(2, 2);

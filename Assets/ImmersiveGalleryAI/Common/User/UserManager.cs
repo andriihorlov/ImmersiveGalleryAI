@@ -8,13 +8,9 @@ namespace ImmersiveGalleryAI.Common.User
         private UserModel _currentUserModel;
         public bool IsGuest { get; set; }
 
-        public void SetUserData(UserModel userModel)
-        {
-            _currentUserModel = userModel;
-            Debug.Log($"Set User data {userModel.imageSettings.Length}");
-        }
-
+        public void SetUserData(UserModel userModel) => _currentUserModel = userModel;
         public string GetCurrentUserLogin() => _currentUserModel?.login;
+        public string GetUserEmail() => _currentUserModel?.email;
         public int GetUserCredits() => _currentUserModel.imagesLeft;
         public ImageSetting[] GetImageSettings() => _currentUserModel.imageSettings;
     }

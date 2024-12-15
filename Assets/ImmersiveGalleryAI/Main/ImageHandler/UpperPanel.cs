@@ -1,8 +1,7 @@
-using ImmersiveGalleryAI.Main.Credits;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 namespace ImmersiveGalleryAI.Main.ImageHandler
 {
@@ -10,42 +9,40 @@ namespace ImmersiveGalleryAI.Main.ImageHandler
     {
         [SerializeField] private TextMeshProUGUI _creditBalanceText;
         [SerializeField] private Button _upgradeButton;
+        [SerializeField] private Button _helpButton;
 
-        [Inject] private ICredits _credits;
-
-        private void Start()
-        {
-            Debug.Log($"Balance: {_credits.GetCreditsBalance()}");
-
-            if (_credits.IsOwnCredits)
-            {
-                gameObject.SetActive(false);
-                return;
-            }
-            
-            UpdateBalance(_credits.GetCreditsBalance());
-        }
-
+        public event Action RequestUpgradeBalance;
+        
         private void OnEnable()
         {
             _upgradeButton.onClick.AddListener(UpgradeButtonClicked);
-            _credits.UpdateBalanceEvent += UpdateBalance;
+            _helpButton.onClick.AddListener(HelpButtonClicked);
         }
 
         private void OnDisable()
         {
             _upgradeButton.onClick.RemoveListener(UpgradeButtonClicked);
-            _credits.UpdateBalanceEvent -= UpdateBalance;
+            _helpButton.onClick.RemoveListener(HelpButtonClicked);
         }
 
-        private void UpdateBalance(int credit)
+        public void SetActive(bool isActive)
+        {
+            gameObject.SetActive(isActive);
+        }
+
+        public void UpdateBalance(int credit)
         {
             _creditBalanceText.text = credit.ToString();
         }
 
         private void UpgradeButtonClicked()
         {
-            _credits.UpgradeBalance();
+            RequestUpgradeBalance?.Invoke();
+        }
+        
+        private void HelpButtonClicked()
+        {
+            // todo: add functionality
         }
     }
 }
